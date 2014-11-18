@@ -1,0 +1,10 @@
+#ifndef COMMON_UTILS_H_INCLUDED__
+#define COMMON_UTILS_H_INCLUDED__
+
+#include <windows.h>
+
+struct CUSTOMVERTEX { FLOAT X, Y, Z; DWORD COLOR; };
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+
+
+#endif
