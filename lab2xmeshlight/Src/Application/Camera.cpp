@@ -8,6 +8,7 @@ void Camera::flipNormalAndD3DCoord(D3DXVECTOR3 *p) {
 }
 
 Camera::Camera() {
+    needToChangeDirection = false;
 }
 
 void Camera::setLookAt(D3DXVECTOR3 lookAt) {
@@ -33,10 +34,25 @@ void Camera::setUpDirection(D3DXVECTOR3 upDirection) {
 
 void Camera::rotateAzimuth(float phi) {
     azimuth += phi;
+    if (azimuth >= 2 * D3DX_PI)
+        azimuth -= 2 * D3DX_PI;
+    if (azimuth <= -2 * D3DX_PI)
+        azimuth += 2 * D3DX_PI;
 }
 
 void Camera::rotateZenith(float phi) {
     zenith += phi;
+    if (zenith >= 2 * D3DX_PI)
+        zenith -= 2 * D3DX_PI;
+    if (zenith <= -2 * D3DX_PI)
+        zenith += 2 * D3DX_PI;
+
+    needToChangeDirection = false;
+    if ((zenith >= 0 && zenith - phi <= 0) || (zenith <= 0 && zenith - phi >= 0)
+        || (zenith >= D3DX_PI && zenith - phi <= D3DX_PI) || (zenith <= D3DX_PI && zenith - phi >= D3DX_PI)
+        || (zenith <= -D3DX_PI && zenith - phi >= -D3DX_PI) || (zenith >= -D3DX_PI && zenith - phi <= -D3DX_PI)) {
+        needToChangeDirection = true;
+    }
 }
 
 void Camera::zoom(float shift) {
@@ -62,6 +78,10 @@ const D3DMATRIX* Camera::getViewMatrix() {
     pos.z = radius * cos(zenith);
     flipNormalAndD3DCoord(&pos);
 
+    if (needToChangeDirection) {
+        upDirection = -upDirection;
+        needToChangeDirection = false;
+    }
     D3DXMatrixLookAtLH(&viewMatrix, &pos, &D3DXVECTOR3(0, 0, 0), &upDirection);
     D3DXMatrixMultiply(&viewMatrix, &viewMatrix, &translateMatrix);
 

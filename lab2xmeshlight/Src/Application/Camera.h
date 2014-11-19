@@ -18,6 +18,8 @@ private:
     float zenith;
     float azimuth;
 
+    bool needToChangeDirection;
+
     void updateView();
     void flipNormalAndD3DCoord(D3DXVECTOR3 *p);
 
