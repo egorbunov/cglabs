@@ -132,14 +132,20 @@ void myApp::renderInternal()
     car.rotateY(circleIterator->isClockwise() * circleIterator->getAngleStep());
     car.translate(circleIterator->getXTranslate(), 0, circleIterator->getZTranslate());
 
+    m_d3ddev->SetFVF(CUSTOMFVF);
     m_d3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
     m_d3ddev->SetTransform(D3DTS_WORLD, car.getWorldMatrix());
     car.render();
 
+    m_d3ddev->SetFVF(CartesianCoordinateSystem::FVF);
     m_d3ddev->SetRenderState(D3DRS_LIGHTING, FALSE);
     m_d3ddev->SetTransform(D3DTS_WORLD, globalCoordSystem.getWorldMatrix());
-    m_d3ddev->SetFVF(CUSTOMFVF);
     globalCoordSystem.render();
+
+    m_d3ddev->SetMaterial(&globalMaterial);
+    m_d3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
+    m_d3ddev->SetTransform(D3DTS_WORLD, plane.getWorldMatrix());
+    plane.render();
 
 }
 
@@ -147,7 +153,8 @@ myApp::myApp(int nW, int nH, void* hInst, int nCmdShow) :
 cglApp(nW, nH, hInst, nCmdShow)
 , m_nPrevMouseX(-100)
 , m_nPrevMouseY(-100)
-, globalCoordSystem(worldCenter, 0x00ff00)
+, globalCoordSystem(worldCenter, 0xffffffff)
+, plane(D3DXVECTOR3(0.0f, 0.0f, 0.0f), { 0.0f, 1.0f, 0.0f }, 1000)
 {
     for (int i = 0; i < MAX_KEYS; i++)
     {
@@ -159,6 +166,13 @@ cglApp(nW, nH, hInst, nCmdShow)
 
 void myApp::init_graphics() {
     m_d3ddev = m_pD3D->getDevice();
+    m_d3ddev->SetRenderState(D3DRS_ZENABLE, true);
+    m_d3ddev->SetRenderState(D3DRS_LIGHTING, true);
+    m_d3ddev->SetRenderState(D3DRS_SPECULARENABLE, true);
+    m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
+    m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    m_d3ddev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+    //m_d3ddev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(102, 102, 0));
 
     isWASDCameraActive = true;
     wasdCamera.setPosition({ 550.0f, 650.0f, 700.0f });
@@ -175,10 +189,10 @@ void myApp::init_graphics() {
 
 
     lights.push_back(new DirectedLight(
-        D3DXVECTOR3(0.0f, 0.1f, 1.0f),
-        D3DXCOLOR(0.8f, 0.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)));
+        D3DXVECTOR3(-1.0f, -1.0f, -1.0f),
+        hexToColor(0),
+        hexToColor(0xffffB9ff),
+        hexToColor(0xffffffff)));
     lights.push_back(new PointLight(
         D3DXVECTOR3(0.0f, 5.0f, 0.0f),
         100.0f,
@@ -186,9 +200,9 @@ void myApp::init_graphics() {
         0.125f,
         0.0f,
         0.05f,
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-        D3DXCOLOR(1.0f, 0.5f, 0.5f, 1.0f),
-        D3DXCOLOR(1.0f, 0.2f, 0.3f, 1.0f)
+        hexToColor(0xfbe53311),
+        hexToColor(0xfbe533),
+        hexToColor(0xfbe533)
         ));
 
     // headlights
@@ -202,9 +216,9 @@ void myApp::init_graphics() {
         1.0f,
         0.1f,
         0.0f,
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f)
         ));
     lights.push_back(new SpotLight(
         D3DXVECTOR3(8.5f, -0.3f, 2.0f),
@@ -216,9 +230,9 @@ void myApp::init_graphics() {
         1.0f,
         0.1f,
         0.0f,
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f)
         ));
 
     car.addLight(lights[lights.size() - 2]);
@@ -230,7 +244,7 @@ void myApp::init_graphics() {
     car.rotateX(D3DX_PI);
     car.rotateY(D3DX_PI);
     car.scale(carScaleFactor, carScaleFactor, carScaleFactor);
-    car.translate(0, 2, radius);
+    car.translate(0, 2.39, radius);
     circleIterator = new CircleIterator(radius, 0, 0.025f);
 
 
@@ -239,15 +253,20 @@ void myApp::init_graphics() {
         lights[i]->switchOn();
     }
 
-    m_d3ddev->SetRenderState(D3DRS_ZENABLE, true);
-    m_d3ddev->SetRenderState(D3DRS_LIGHTING, true);
-    m_d3ddev->SetRenderState(D3DRS_SPECULARENABLE, true);
-    m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-    m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    m_d3ddev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(102, 102, 0));
-    m_nClearColor = 0xFF000000;
+    ZeroMemory(&globalMaterial, sizeof(D3DMATERIAL9)); // clear out the struct for use
+    globalMaterial.Diffuse = hexToColor(0x00FFC311);
+    globalMaterial.Ambient = hexToColor(0);
+    globalMaterial.Emissive = hexToColor(0x60000B11);
+    globalMaterial.Specular = hexToColor(0x60000B11);
+    globalMaterial.Power = 0.9f;
+    m_d3ddev->SetMaterial(&globalMaterial);
 
+    m_nClearColor = 0xFF111111;
+
+    globalCoordSystem.scale(1000.0f, 1000.0f, 1000.0f);
     globalCoordSystem.create(m_d3ddev);
+
+    plane.create(m_d3ddev);
 }
 
 void myApp::update()

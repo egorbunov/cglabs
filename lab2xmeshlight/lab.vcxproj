@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\DirectedLight.h" />
+    <ClInclude Include="Src\Application\Plane.h" />
     <ClInclude Include="Src\Application\PointLight.h" />
     <ClInclude Include="Src\Application\SpotLight.h" />
     <ClInclude Include="Src\Application\TransformableObject.h" />

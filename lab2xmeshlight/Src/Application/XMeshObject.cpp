@@ -15,7 +15,7 @@ void XMeshObject::loadModelFromFile(std::string name) {
 
     LPD3DXBUFFER materialBuffer;
 
-    HRESULT hr = D3DXLoadMeshFromX(convertToWstring(name).c_str(), D3DXMESH_SYSTEMMEM,
+    HRESULT hr = D3DXLoadMeshFromX(convertToWstring(name).c_str(), 0,
                                    d3dDevice, NULL,
                                    &materialBuffer, NULL, &materialNumber,
                                    &mesh);

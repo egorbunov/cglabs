@@ -17,7 +17,6 @@ public:
                D3DXCOLOR &ambient = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
                D3DXCOLOR &diffuse = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f),
                D3DXCOLOR &specular = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f)) {
-        
         light.Type = PointLight::TYPE;
         light.Range = range;
         light.Falloff = fallOff;

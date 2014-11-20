@@ -28,6 +28,7 @@
 #include "DirectedLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "Plane.h"
 
 
 
@@ -66,7 +67,10 @@ private:
     CartesianCoordinateSystem globalCoordSystem;
     XMeshObject car;
     CircleIterator *circleIterator;
+    Plane plane;
     bool isWASDCameraActive;
+
+    D3DMATERIAL9 globalMaterial;
 
     // lights
     std::vector<LightSource*> lights;
