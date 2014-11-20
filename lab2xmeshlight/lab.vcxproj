@@ -92,11 +92,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Application\AbstractRenderableObject.cpp" />
+    <ClCompile Include="Src\Application\TransformableObject.cpp" />
     <ClCompile Include="Src\Application\Camera.cpp" />
     <ClCompile Include="Src\Application\CartesianCoordinateSystem.cpp" />
     <ClCompile Include="Src\Application\CircleIterator.cpp" />
-    <ClCompile Include="Src\Application\LightSource.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\myApp.cpp" />
     <ClCompile Include="Src\Application\WASDCamera.cpp" />
@@ -106,11 +105,15 @@
     <ClCompile Include="Src\Library\cglTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Application\AbstractRenderableObject.h" />
+    <ClInclude Include="Src\Application\DirectedLight.h" />
+    <ClInclude Include="Src\Application\PointLight.h" />
+    <ClInclude Include="Src\Application\SpotLight.h" />
+    <ClInclude Include="Src\Application\TransformableObject.h" />
     <ClInclude Include="Src\Application\Camera.h" />
     <ClInclude Include="Src\Application\CartesianCoordinateSystem.h" />
     <ClInclude Include="Src\Application\CircleIterator.h" />
     <ClInclude Include="Src\Application\commonUtils.h" />
+    <ClInclude Include="Src\Application\LightSource.h" />
     <ClInclude Include="Src\Application\myApp.h" />
     <ClInclude Include="Src\Application\WASDCamera.h" />
     <ClInclude Include="Src\Application\XMeshObject.h" />

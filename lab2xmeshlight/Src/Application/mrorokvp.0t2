@@ -4,10 +4,10 @@
 #include <stdexcept>
 
 #include "commonUtils.h"
-#include "TransformableObject.h"
+#include "SceneObject.h"
 
 
-class CartesianCoordinateSystem : public TransformableObject {
+class CartesianCoordinateSystem : public SceneObject {
 private:
     static const int VERTEX_NUMBER = 6;
     static const int BIG_NUMBER = 500;
@@ -20,7 +20,7 @@ private:
 public:
     CartesianCoordinateSystem(D3DXVECTOR3 center, DWORD color, float length = (float) BIG_NUMBER);
     void create(LPDIRECT3DDEVICE9 d3dDevice);
-    void render();
+    void render() override;
 };
 
 #endif

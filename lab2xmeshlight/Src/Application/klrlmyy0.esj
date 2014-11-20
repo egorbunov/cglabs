@@ -96,12 +96,9 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
                            }
                            isWASDCameraActive = !isWASDCameraActive;
                            break;
-                       }
-
-                       for (size_t i = 0; i < lights.size(); ++i) {
-                           if (std::to_string(i + 1).at(0) == (char)wParam) {
-                               lights[i]->changeState();
-                           }
+                       case '1':
+                           lights[0]->changeState();
+                           break;
                        }
 
                        break;
@@ -127,7 +124,7 @@ void myApp::renderInternal()
     else {
         m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera.getViewMatrix());
     }
-
+    
     circleIterator->next();
     car.rotateY(circleIterator->isClockwise() * circleIterator->getAngleStep());
     car.translate(circleIterator->getXTranslate(), 0, circleIterator->getZTranslate());
@@ -140,13 +137,14 @@ void myApp::renderInternal()
     m_d3ddev->SetTransform(D3DTS_WORLD, globalCoordSystem.getWorldMatrix());
     m_d3ddev->SetFVF(CUSTOMFVF);
     globalCoordSystem.render();
-
+    
 }
 
-myApp::myApp(int nW, int nH, void* hInst, int nCmdShow) :
+myApp::myApp(int nW, int nH, void* hInst, int nCmdShow): 
 cglApp(nW, nH, hInst, nCmdShow)
 , m_nPrevMouseX(-100)
 , m_nPrevMouseY(-100)
+// my objects:
 , globalCoordSystem(worldCenter, 0x00ff00)
 {
     for (int i = 0; i < MAX_KEYS; i++)
@@ -154,7 +152,29 @@ cglApp(nW, nH, hInst, nCmdShow)
         m_keysPressed[i] = false;
     }
 
+    isWASDCameraActive = true;
     init_graphics();
+
+    //m_d3ddev->SetRenderState(D3DRS_ZENABLE, true);
+    m_d3ddev->SetRenderState(D3DRS_LIGHTING, true);
+    //m_d3ddev->SetRenderState(D3DRS_SPECULARENABLE, true);
+    //m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
+    //m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    m_d3ddev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(155, 50, 40));
+    m_nClearColor = 0xFF000000;
+
+    globalCoordSystem.create(m_d3ddev);
+
+    car.setDevice(m_d3ddev);
+    float carScaleFactor = 15;
+    float radius = 30;
+    car.loadModelFromFile("car00.x");
+    car.rotateX(D3DX_PI);
+    car.rotateY(D3DX_PI);
+    car.scale(carScaleFactor, carScaleFactor, carScaleFactor);
+    car.translate(0, 2, radius);
+
+    circleIterator = new CircleIterator(radius, 0, 0.025);
 }
 
 void myApp::init_graphics() {
@@ -167,93 +187,28 @@ void myApp::init_graphics() {
     m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera.getViewMatrix());    // set the view transform to matView
 
     D3DXMatrixPerspectiveFovLH(&m_matProj,
-                               D3DXToRadian(45),    // the horizontal field of view
-                               (FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, // aspect ratio
-                               100.0f,    // the near view-plane
-                               10000.0f);    // the far view-plane
+        D3DXToRadian(45),    // the horizontal field of view
+        (FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, // aspect ratio
+        100.0f,    // the near view-plane
+        10000.0f);    // the far view-plane
     m_d3ddev->SetTransform(D3DTS_PROJECTION, &m_matProj);    // set the projection
 
 
-    lights.push_back(new DirectedLight(
+    /*lights.resize(1);
+    lights[0] = new DirectedLight(
         D3DXVECTOR3(0.0f, 0.1f, 1.0f),
-        D3DXCOLOR(0.8f, 0.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)));
-    lights.push_back(new PointLight(
-        D3DXVECTOR3(0.0f, 5.0f, 0.0f),
-        100.0f,
-        0.0f,
-        0.125f,
-        0.0f,
-        0.05f,
-        D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-        D3DXCOLOR(1.0f, 0.5f, 0.5f, 1.0f),
-        D3DXCOLOR(1.0f, 0.2f, 0.3f, 1.0f)
-        ));
-
-    // headlights
-    lights.push_back(new SpotLight(
-        D3DXVECTOR3(8.5f, -0.3f, 2.0f),
-        D3DXVECTOR3(1.0f, 0.0f, 0.0f),
-        D3DXToRadian(20.0f),
-        D3DXToRadian(40.0f),
-        100.0f,
-        1.0f,
-        1.0f,
-        0.1f,
-        0.0f,
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)
-        ));
-    lights.push_back(new SpotLight(
-        D3DXVECTOR3(8.5f, -0.3f, 2.0f),
-        D3DXVECTOR3(1.0f, 0.0f, 0.0f),
-        D3DX_PI / 7,
-        D3DX_PI / 5,
-        100.0f,
-        1.0f,
-        1.0f,
-        0.1f,
-        0.0f,
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
-        D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)
-        ));
-
-    car.addLight(lights[lights.size() - 2]);
-    car.addLight(lights[lights.size() - 2]);
-    car.setDevice(m_d3ddev);
-    float carScaleFactor = 15;
-    float radius = 30;
-    car.loadModelFromFile("car00.x");
-    car.rotateX(D3DX_PI);
-    car.rotateY(D3DX_PI);
-    car.scale(carScaleFactor, carScaleFactor, carScaleFactor);
-    car.translate(0, 2, radius);
-    circleIterator = new CircleIterator(radius, 0, 0.025f);
-
-
-    for (unsigned int i = 0; i < lights.size(); ++i) {
-        lights[i]->create(m_d3ddev, i + 5);
-        lights[i]->switchOn();
-    }
-
-    m_d3ddev->SetRenderState(D3DRS_ZENABLE, true);
-    m_d3ddev->SetRenderState(D3DRS_LIGHTING, true);
-    m_d3ddev->SetRenderState(D3DRS_SPECULARENABLE, true);
-    m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
-    m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    m_d3ddev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(102, 102, 0));
-    m_nClearColor = 0xFF000000;
-
-    globalCoordSystem.create(m_d3ddev);
+        D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
+        D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f));
+    lights[0]->create(m_d3ddev, 0);
+    lights[0]->switchOn();*/
 }
 
 void myApp::update()
 {
     // Call predecessor update
     cglApp::update();
+
     // Process keyboard
     float dx = 0.0f;
     float dy = 0.0f;
@@ -282,13 +237,15 @@ void myApp::update()
             wasdCamera.moveBackward(CAMERA_SHIFT_STEP);
     }
 
-    car.rotateZ(dy);
-    car.rotateX(dx);
+
+
+    //car.rotateZ(dy);
+    //car.rotateX(dx);
 }
 
 myApp::~myApp() {
     delete circleIterator;
-    for (unsigned int i = 0; i < lights.size(); ++i) {
+    for (int i = 0; i < lights.size(); ++i) {
         delete lights[i];
     }
 }

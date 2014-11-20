@@ -14,6 +14,8 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <vector>
+
 #include "Library/cglApp.h"
 
 #include "commonUtils.h"
@@ -22,6 +24,11 @@
 #include "XMeshObject.h"
 #include "CircleIterator.h"
 #include "WASDCamera.h"
+#include "LightSource.h"
+#include "DirectedLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+
 
 
 // *******************************************************************
@@ -60,6 +67,9 @@ private:
     XMeshObject car;
     CircleIterator *circleIterator;
     bool isWASDCameraActive;
+
+    // lights
+    std::vector<LightSource*> lights;
 
 
     enum

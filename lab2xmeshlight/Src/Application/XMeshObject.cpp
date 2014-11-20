@@ -32,7 +32,7 @@ void XMeshObject::loadModelFromFile(std::string name) {
         // Copy the material
         meshMaterials[i] = d3dxMaterials[i].MatD3D;
 
-        // Set the ambient color for the material (D3DX does not do this)
+        // Set the ambient color for the material
         meshMaterials[i].Ambient = meshMaterials[i].Diffuse;
 
         // Create the texture if it exists - it may not
@@ -45,6 +45,13 @@ void XMeshObject::loadModelFromFile(std::string name) {
 }
 
 void XMeshObject::render() {
+    if (d3dDevice == NULL)
+        throw std::runtime_error("d3d device is null! Probably you does't call set(...) method!");
+
+    for (size_t i = 0; i < lights.size(); ++i) {
+        lights[i]->transform(worldMatrix);
+    }
+
     for (unsigned int i = 0; i < materialNumber; i++)
     {
         // Set the material and texture for this subset
@@ -53,6 +60,12 @@ void XMeshObject::render() {
 
         // Draw the mesh subset
         mesh->DrawSubset(i);
+    }
+}
+
+void XMeshObject::addLight(LightSource *lightSource) {
+    if (lightSource != NULL) {
+        lights.push_back(lightSource);
     }
 }
 
