@@ -29,15 +29,6 @@ public:
         light.Specular = specular;
     }
 
-    void transform(D3DXMATRIX matrix) {
-        D3DXVECTOR4 res;
-        D3DXVec3Transform(&res, reinterpret_cast<D3DXVECTOR3 const *>(&light.Position), &matrix);
-        light.Position = D3DXVECTOR3(res.x, res.y, res.z);
-
-        D3DXVec3Transform(&res, reinterpret_cast<D3DXVECTOR3 const *>(&light.Direction), &matrix);
-        light.Direction = D3DXVECTOR3(res.x, res.y, res.z);
-    }
-
     void setPosition(D3DXVECTOR3 &pos) {
         light.Position = pos;
     }

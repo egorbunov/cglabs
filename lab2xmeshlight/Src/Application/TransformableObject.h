@@ -18,17 +18,21 @@ protected:
 public:
     TransformableObject();
 
-    TransformableObject* translate(float dx, float dy, float dz);
+    virtual TransformableObject* translate(float dx, float dy, float dz);
 
-    TransformableObject* rotateX(float angle);
+    virtual TransformableObject* rotateX(float angle);
 
-    TransformableObject* rotateY(float angle);
+    virtual TransformableObject* rotateY(float angle);
 
-    TransformableObject* rotateZ(float angle);
+    virtual TransformableObject* rotateZ(float angle);
 
-    TransformableObject* scale(float sx, float sy, float sz);
+    virtual TransformableObject* scale(float sx, float sy, float sz);
 
     const D3DXMATRIX* getWorldMatrix();
+    const D3DXMATRIX* getTranslationMatrix();
+    const D3DXMATRIX* getScaleMatrix();
+    const D3DXMATRIX* getRotationMatrix();
+
 };
 
 #endif

@@ -71,7 +71,7 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
     case WM_MOUSEWHEEL:
     {
                           if (!isWASDCameraActive) {
-                              camera.zoom(-(float)((signed short)(HIWORD(wParam))));
+                              camera.zoom(-0.25 * (float)((signed short)(HIWORD(wParam))));
                           }
                           break;
     }
@@ -121,6 +121,7 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
 
 void myApp::renderInternal()
 {
+    static float u = 0;
     if (!isWASDCameraActive) {
         m_d3ddev->SetTransform(D3DTS_VIEW, camera.getViewMatrix());
     }
@@ -136,25 +137,24 @@ void myApp::renderInternal()
     m_d3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
     m_d3ddev->SetTransform(D3DTS_WORLD, car.getWorldMatrix());
     car.render();
+    m_d3ddev->SetMaterial(&globalMaterial);
+    m_d3ddev->SetTransform(D3DTS_WORLD, plane.getWorldMatrix());
+    plane.render();
+
 
     m_d3ddev->SetFVF(CartesianCoordinateSystem::FVF);
     m_d3ddev->SetRenderState(D3DRS_LIGHTING, FALSE);
     m_d3ddev->SetTransform(D3DTS_WORLD, globalCoordSystem.getWorldMatrix());
     globalCoordSystem.render();
-
-    m_d3ddev->SetMaterial(&globalMaterial);
     m_d3ddev->SetRenderState(D3DRS_LIGHTING, TRUE);
-    m_d3ddev->SetTransform(D3DTS_WORLD, plane.getWorldMatrix());
-    plane.render();
-
 }
 
 myApp::myApp(int nW, int nH, void* hInst, int nCmdShow) :
 cglApp(nW, nH, hInst, nCmdShow)
 , m_nPrevMouseX(-100)
 , m_nPrevMouseY(-100)
-, globalCoordSystem(worldCenter, 0xffffffff)
-, plane(D3DXVECTOR3(0.0f, 0.0f, 0.0f), { 0.0f, 1.0f, 0.0f }, 1000)
+, globalCoordSystem(worldCenter, 0x808080)
+, plane(D3DXVECTOR3(0.0f, 0.0f, 0.0f), { 0.0f, 1.0f, 0.0f }, 110, 0.0045)
 {
     for (int i = 0; i < MAX_KEYS; i++)
     {
@@ -172,10 +172,10 @@ void myApp::init_graphics() {
     m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
     m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     m_d3ddev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    //m_d3ddev->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(102, 102, 0));
 
     isWASDCameraActive = true;
-    wasdCamera.setPosition({ 550.0f, 650.0f, 700.0f });
+    float initPos = 150.0f;
+    wasdCamera.setPosition({ initPos, initPos, initPos });
     wasdCamera.setUpDirection({ 0.0f, 1.0f, 0.0f });
     wasdCamera.setLookAt(worldCenter);
     m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera.getViewMatrix());    // set the view transform to matView
@@ -183,87 +183,95 @@ void myApp::init_graphics() {
     D3DXMatrixPerspectiveFovLH(&m_matProj,
                                D3DXToRadian(45),    // the horizontal field of view
                                (FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, // aspect ratio
-                               100.0f,    // the near view-plane
-                               10000.0f);    // the far view-plane
+                               10.0f,    // the near view-plane
+                               1000.0f);    // the far view-plane
     m_d3ddev->SetTransform(D3DTS_PROJECTION, &m_matProj);    // set the projection
 
 
     lights.push_back(new DirectedLight(
         D3DXVECTOR3(-1.0f, -1.0f, -1.0f),
         hexToColor(0),
-        hexToColor(0xffffB9ff),
+        hexToColor(0x778899FF),
         hexToColor(0xffffffff)));
     lights.push_back(new PointLight(
-        D3DXVECTOR3(0.0f, 5.0f, 0.0f),
-        100.0f,
+        D3DXVECTOR3(60.0f, 30.0f, -70.0f),
+        64.0f,
+        1.0f,
+        0.005f,
+        0.025f,
         0.0f,
-        0.125f,
-        0.0f,
-        0.05f,
-        hexToColor(0xfbe53311),
-        hexToColor(0xfbe533),
-        hexToColor(0xfbe533)
+        hexToColor(0),
+        hexToColor(0xFF8C00FF),
+        hexToColor(0)
         ));
 
-    // headlights
+    // headlights: A lot of magic numbers ;)
+    float headlightX = -12.5f;
+    float headlightZ = -5.5f;
+    float headlightY = -9.35f;
     lights.push_back(new SpotLight(
-        D3DXVECTOR3(8.5f, -0.3f, 2.0f),
-        D3DXVECTOR3(1.0f, 0.0f, 0.0f),
+        D3DXVECTOR3(headlightX, headlightY, headlightZ),
+        D3DXVECTOR3(-1.6f, 1.0f, 0.0f),
         D3DXToRadian(20.0f),
-        D3DXToRadian(40.0f),
-        100.0f,
+        D3DXToRadian(30.0f),
+        60.0f,
         1.0f,
-        1.0f,
-        0.1f,
         0.0f,
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f)
+        0.100f,
+        0.0f,
+        hexToColor(0x7FFFD4FF),
+        hexToColor(0x7FFFD4FF),
+        hexToColor(0x7FFFD4FF)
         ));
     lights.push_back(new SpotLight(
-        D3DXVECTOR3(8.5f, -0.3f, 2.0f),
-        D3DXVECTOR3(1.0f, 0.0f, 0.0f),
-        D3DX_PI / 7,
-        D3DX_PI / 5,
-        100.0f,
+        D3DXVECTOR3(headlightX, headlightY, headlightZ + 12.5f),
+        D3DXVECTOR3(-1.6f, 1.0f, 0.0f),
+        D3DXToRadian(20.0f),
+        D3DXToRadian(30.0f),
+        60.0f,
         1.0f,
-        1.0f,
-        0.1f,
         0.0f,
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f),
-        D3DXCOLOR(0.5f, 0.0f, 0.5f, 1.0f)
+        0.100f,
+        0.0f,
+        hexToColor(0x7FFFD4FF),
+        hexToColor(0x7FFFD4FF),
+        hexToColor(0x7FFFD4FF)
         ));
 
-    car.addLight(lights[lights.size() - 2]);
-    car.addLight(lights[lights.size() - 2]);
-    car.setDevice(m_d3ddev);
-    float carScaleFactor = 15;
-    float radius = 30;
-    car.loadModelFromFile("car00.x");
-    car.rotateX(D3DX_PI);
-    car.rotateY(D3DX_PI);
-    car.scale(carScaleFactor, carScaleFactor, carScaleFactor);
-    car.translate(0, 2.39, radius);
-    circleIterator = new CircleIterator(radius, 0, 0.025f);
 
+    car.setDevice(m_d3ddev);
+    float carScaleFactor = 3;
+    float radius = 25;
+    car.loadModelFromFile("car00.x");
+    car.translate(0, 0, radius);//radius);
+    circleIterator = new CircleIterator(radius, 0.0f, 0.025f);
+
+    car.addLight(lights[lights.size() - 1]);
+    car.addLight(lights[lights.size() - 2]);
+
+    car.rotateX(-D3DX_PI);
+    car.rotateY(-D3DX_PI);
+
+    car.scale(carScaleFactor, carScaleFactor, carScaleFactor);
+    car.translate(0, 2.39f, 0);//radius);
 
     for (unsigned int i = 0; i < lights.size(); ++i) {
-        lights[i]->create(m_d3ddev, i + 5);
+        lights[i]->create(m_d3ddev, i);
         lights[i]->switchOn();
     }
 
     ZeroMemory(&globalMaterial, sizeof(D3DMATERIAL9)); // clear out the struct for use
-    globalMaterial.Diffuse = hexToColor(0x00FFC311);
-    globalMaterial.Ambient = hexToColor(0);
-    globalMaterial.Emissive = hexToColor(0x60000B11);
-    globalMaterial.Specular = hexToColor(0x60000B11);
+    globalMaterial.Diffuse = hexToColor(0x6495EDff);
+    globalMaterial.Ambient = hexToColor(0x6495EDff);
+    globalMaterial.Emissive = hexToColor(0);
+    globalMaterial.Specular = hexToColor(0);
     globalMaterial.Power = 0.9f;
     m_d3ddev->SetMaterial(&globalMaterial);
 
     m_nClearColor = 0xFF111111;
 
-    globalCoordSystem.scale(1000.0f, 1000.0f, 1000.0f);
+    globalCoordSystem.scale(220.0f, 220.0f, 220.0f);
+    globalCoordSystem.translate(-0.5, 0, -0.5);
     globalCoordSystem.create(m_d3ddev);
 
     plane.create(m_d3ddev);

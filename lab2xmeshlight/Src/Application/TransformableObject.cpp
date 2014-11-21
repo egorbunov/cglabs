@@ -49,3 +49,15 @@ void TransformableObject::updateWorldMatrix() {
     D3DXMatrixMultiply(&worldMatrix, &rotationMatrix, &translationMatrix);
     D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &scaleMatrix);
 }
+
+const D3DXMATRIX* TransformableObject::getRotationMatrix() {
+    return &rotationMatrix;
+}
+
+const D3DXMATRIX* TransformableObject::getTranslationMatrix() {
+    return &translationMatrix;
+}
+
+const D3DXMATRIX* TransformableObject::getScaleMatrix() {
+    return &scaleMatrix;
+}

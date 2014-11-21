@@ -20,12 +20,6 @@ public:
         light.Type = DirectedLight::TYPE;
     }
 
-    void transform(D3DXMATRIX matrix) {
-        D3DXVECTOR4 res;
-        D3DXVec3Transform(&res, reinterpret_cast<D3DXVECTOR3 const *>(&light.Direction), &matrix);
-        light.Direction = D3DXVECTOR3(res.x, res.y, res.z);
-    }
-
     void setDirection(D3DXVECTOR3 direction) {
         light.Direction = direction;
     }

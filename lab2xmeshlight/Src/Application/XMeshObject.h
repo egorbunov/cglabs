@@ -19,6 +19,8 @@ private:
     D3DMATERIAL9 *meshMaterials;
     LPDIRECT3DTEXTURE9 *meshTextures;
 
+    std::vector<D3DVECTOR> initialLightPositions;
+    std::vector<D3DVECTOR> initialLightDirections;
     std::vector<LightSource*> lights;
 public:
     XMeshObject();
@@ -27,6 +29,14 @@ public:
     void loadModelFromFile(std::string filename);
     void render();
     void addLight(LightSource *lightSource);
+
+    // overriding
+
+    //virtual TransformableObject* translate(float dx, float dy, float dz);
+    //virtual TransformableObject* rotateX(float angle);
+    //virtual TransformableObject* rotateY(float angle);
+    //virtual TransformableObject* rotateZ(float angle);
+    //virtual TransformableObject* scale(float sx, float sy, float sz);
 };
 
 #endif
