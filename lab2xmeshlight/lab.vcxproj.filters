@@ -7,15 +7,6 @@
     <ClCompile Include="Src\Application\CartesianCoordinateSystem.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Library\cglApp.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Library\cglD3D.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Library\cglTimer.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\CircleIterator.cpp">
       <Filter>sources</Filter>
     </ClCompile>
@@ -34,21 +25,21 @@
     <ClCompile Include="Src\Application\XMeshObject.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Library\cglApp.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Library\cglD3D.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Library\cglTimer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Application\Camera.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\CartesianCoordinateSystem.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Library\cglApp.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Library\cglTimer.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Library\cglD3D.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\CircleIterator.h">
@@ -84,6 +75,15 @@
     <ClInclude Include="Src\Application\XMeshObject.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Library\cglApp.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Library\cglD3D.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Library\cglTimer.h">
+      <Filter>Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="headers">
@@ -91,6 +91,9 @@
     </Filter>
     <Filter Include="sources">
       <UniqueIdentifier>{3f474713-5115-4d30-aab9-f7b838267045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{80a0dcf0-df1d-4881-96a5-c79d50844d71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

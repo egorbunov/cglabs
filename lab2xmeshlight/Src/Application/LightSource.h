@@ -14,7 +14,8 @@ public:
     LightSource() : isOn(false), device(NULL) {
         ZeroMemory(&light, sizeof(light));
     }
-    virtual ~LightSource() = 0 {}
+    virtual ~LightSource() = 0 {
+    }
 
     virtual unsigned getIndex() {
         return index;

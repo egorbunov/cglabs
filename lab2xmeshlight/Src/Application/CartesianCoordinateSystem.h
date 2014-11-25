@@ -17,7 +17,7 @@ private:
     LPDIRECT3DDEVICE9 d3dDevice;
 public:
     static const int FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
-
+    ~CartesianCoordinateSystem();
     CartesianCoordinateSystem(D3DXVECTOR3 center, DWORD color);
     void create(LPDIRECT3DDEVICE9 d3dDevice);
     void render();

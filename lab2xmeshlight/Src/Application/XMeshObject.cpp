@@ -2,6 +2,7 @@
 
 XMeshObject::XMeshObject() {
     this->d3dDevice = NULL;
+    this->mesh = NULL;
 }
 
 void XMeshObject::setDevice(LPDIRECT3DDEVICE9 d3dDevice) {
@@ -87,41 +88,9 @@ void XMeshObject::addLight(LightSource *lightSource) {
 }
 
 XMeshObject::~XMeshObject() {
+    if (mesh != NULL) {
+        mesh->Release();
+    }
     delete[] meshMaterials;
     delete[] meshTextures;
 }
-
-//TransformableObject* XMeshObject::translate(float dx, float dy, float dz) {
-//    for (size_t i = 0; i < lights.size(); ++i)
-//        lights[i]->translate(dx, dy, dz);
-//    return TransformableObject::translate(dx, dy, dz);
-//}
-//
-//TransformableObject* XMeshObject::rotateX(float angle) {
-//    D3DXMATRIX tmp;
-//    D3DXMatrixRotationX(&tmp, angle);
-//    for (size_t i = 0; i < lights.size(); ++i)
-//        lights[i]->rotate(tmp);
-//    return TransformableObject::rotateX(angle);
-//}
-//
-//TransformableObject* XMeshObject::rotateY(float angle) {
-//    D3DXMATRIX tmp;
-//    D3DXMatrixRotationX(&tmp, angle);
-//    for (size_t i = 0; i < lights.size(); ++i)
-//        lights[i]->rotate(tmp);
-//    return TransformableObject::rotateY(angle);
-//}
-//
-//TransformableObject* XMeshObject::rotateZ(float angle) {
-//    D3DXMATRIX tmp;
-//    D3DXMatrixRotationX(&tmp, angle);
-//    for (size_t i = 0; i < lights.size(); ++i)
-//        lights[i]->rotate(tmp);
-//    return TransformableObject::rotateZ(angle);
-//}
-//
-//TransformableObject* XMeshObject::scale(float sx, float sy, float sz) {
-//    D3DXMatrixScaling(&scaleMatrix, sx, sy, sz);
-//    return this;
-//}

@@ -8,6 +8,7 @@
 @project  D3DBase
 @author   Bvs
 */
+#define D3D_DEBUG_INFO
 
 // *******************************************************************
 // includes

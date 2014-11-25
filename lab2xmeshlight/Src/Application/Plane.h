@@ -9,8 +9,6 @@ class Plane : public TransformableObject {
 private:
     struct VertexWithNormal { FLOAT X, Y, Z; D3DVECTOR NORMAL; DWORD COLOR; };
 
-    static const int BIG_NUMBER = 500;
-
     D3DXVECTOR3 center;
     DWORD color;
     LPDIRECT3DVERTEXBUFFER9 vertexBuffer;
@@ -18,19 +16,29 @@ private:
     LPDIRECT3DDEVICE9 d3dDevice;
     int vertexNumber;
 public:
-    static const int FVF = D3DFVF_XYZ | D3DFVF_NORMAL;
+    static const int FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE;
 
-    Plane(D3DXVECTOR3 center, D3DVECTOR normal, float scaleFactor, float step = 0.2) {
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Plane"/> class.
+    /// </summary>
+    /// <param name="center">The center.</param>
+    /// <param name="normal">The normal.</param>
+    /// <param name="scaleFactor">The scale factor (with scale == 1 surface will be a square with edge length = 1) </param>
+    /// <param name="step">The step - step of triangulation, less step --> more triangles</param>
+    Plane(D3DXVECTOR3 center, D3DVECTOR normal, DWORD color, float scaleFactor, float step = 0.2) {
+        this->vertexBuffer = NULL;
+        this->vertices = NULL;
+
         vertexNumber = 0;
         VertexWithNormal vlt, vrt, vlb, vrb;
-
         vertices = new VertexWithNormal[(size_t)(6 * (2 / step + 1) * (2 / step + 1)) + 1];
         for (float x = -1; x < 1; x += step) {
             for (float z = -1; z < 1; z += step) {
-                vlt = { x, (-x * normal.x) / normal.y, z, normal, 0xff00ffff };
-                vrt = { x + step, (-(x + step) * normal.x) / normal.y, z, normal, 0xff00ffff };
-                vlb = { x, (-x * normal.x) / normal.y, z + step, normal, 0xff00ffff };
-                vrb = { x + step, (-(x + step) * normal.x) / normal.y, z + step, normal, 0xff00ffff };
+                vlt = { x, (-x * normal.x) / normal.y, z, normal, color };
+                vrt = { x + step, (-(x + step) * normal.x) / normal.y, z, normal, color };
+                vlb = { x, (-x * normal.x) / normal.y, z + step, normal, color };
+                vrb = { x + step, (-(x + step) * normal.x) / normal.y, z + step, normal, color };
 
                 vertices[vertexNumber++] = vlt;
                 vertices[vertexNumber++] = vrt;
@@ -45,10 +53,17 @@ public:
         scale(scaleFactor, scaleFactor, scaleFactor);
     }
 
+    ~Plane() {
+        if (vertexBuffer != NULL)
+            vertexBuffer->Release();
+        if (vertices != NULL)
+            delete[] vertices;
+    }
+
     void create(LPDIRECT3DDEVICE9 d3dDevice) {
         this->d3dDevice = d3dDevice;
         d3dDevice->CreateVertexBuffer(vertexNumber * sizeof(VertexWithNormal),
-                                      0,
+                                      D3DUSAGE_WRITEONLY,
                                       FVF,
                                       D3DPOOL_MANAGED,
                                       &vertexBuffer,

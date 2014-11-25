@@ -20,6 +20,7 @@
 // *******************************************************************
 // defines & constants
 
+
 // *******************************************************************
 // classes 
 
@@ -56,7 +57,7 @@ public:
   };
 
   cglD3D(const CreateParams &params);
-  ~cglD3D();
+  virtual ~cglD3D();
 
   bool isFailed();
 

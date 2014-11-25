@@ -14,10 +14,10 @@ inline std::wstring convertToWstring(std::string str) {
 
 inline D3DXCOLOR hexToColor(DWORD color) {
     return (D3DXCOLOR(
-        ((color >> 24) & ~((-1) << 8)) / 255.0f,
         ((color >> 16) & ~((-1) << 8)) / 255.0f,
         ((color >> 8) & ~((-1) << 8)) / 255.0f,
-        ((color) & ~((-1) << 8)) / 255.0f));
+        ((color) & ~((-1) << 8)) / 255.0f,
+        1.0f));
 }
 
 #endif

@@ -2,6 +2,7 @@
 
 
 CartesianCoordinateSystem::CartesianCoordinateSystem(D3DXVECTOR3 center, DWORD color) {
+    this->vertexBuffer = NULL;
     this->d3dDevice = NULL;
     this->center = center;
     this->translate(center.x, center.y, center.z);
@@ -17,7 +18,7 @@ void CartesianCoordinateSystem::render() {
     }
     d3dDevice->SetFVF(CartesianCoordinateSystem::FVF);
     d3dDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(SimpleVertex));
-    d3dDevice->DrawPrimitive(D3DPT_LINELIST, 0, VERTEX_NUMBER);
+    d3dDevice->DrawPrimitive(D3DPT_LINELIST, 0, VERTEX_NUMBER / 2);
 }
 
 /*
@@ -26,7 +27,7 @@ void CartesianCoordinateSystem::render() {
 void CartesianCoordinateSystem::create(LPDIRECT3DDEVICE9 d3dDevice) {
     this->d3dDevice = d3dDevice;
     d3dDevice->CreateVertexBuffer(VERTEX_NUMBER * sizeof(SimpleVertex),
-                                  0,
+                                  D3DUSAGE_WRITEONLY,
                                   CartesianCoordinateSystem::FVF,
                                   D3DPOOL_MANAGED,
                                   &vertexBuffer,
@@ -36,4 +37,10 @@ void CartesianCoordinateSystem::create(LPDIRECT3DDEVICE9 d3dDevice) {
     vertexBuffer->Lock(0, 0, (void**)&pVoid, 0);
     memcpy(pVoid, axes, sizeof(axes));
     vertexBuffer->Unlock();
+}
+
+CartesianCoordinateSystem::~CartesianCoordinateSystem() {
+    if (vertexBuffer != NULL) {
+        vertexBuffer->Release();
+    }
 }
