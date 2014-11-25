@@ -18,6 +18,7 @@ private:
 
     CUSTOMVERTEX getTorusVertex(float theta, float phi);
 public:
+    ~Thorus();
     Thorus(float majorRadius, float minorRadius, D3DXVECTOR3 position);
     void create(LPDIRECT3DDEVICE9 d3dDevice);
     void render(LPDIRECT3DDEVICE9 d3dDevice) override;

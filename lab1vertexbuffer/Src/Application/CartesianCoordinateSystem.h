@@ -16,6 +16,7 @@ private:
     LPDIRECT3DVERTEXBUFFER9 vertexBuffer;
     CUSTOMVERTEX axes[VERTEX_NUMBER];
 public:
+    ~CartesianCoordinateSystem();
     CartesianCoordinateSystem(D3DXVECTOR3 center, DWORD color, float length = (float) BIG_NUMBER);
     void create(LPDIRECT3DDEVICE9 d3dDevice);
     void render(LPDIRECT3DDEVICE9 d3dDevice) override;

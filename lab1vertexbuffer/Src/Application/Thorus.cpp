@@ -12,6 +12,7 @@ CUSTOMVERTEX Thorus::getTorusVertex(float theta, float phi)
 }
 
 Thorus::Thorus(float majorRadius, float minorRadius, D3DXVECTOR3 position) {
+    vertexBuffer = NULL;
     this->majorRadius = majorRadius;
     this->minorRadius = minorRadius;
     float phi = 0;
@@ -37,13 +38,13 @@ Thorus::Thorus(float majorRadius, float minorRadius, D3DXVECTOR3 position) {
 void Thorus::render(LPDIRECT3DDEVICE9 d3dDevice) {
     d3dDevice->SetFVF(Thorus::CUSTMFVF);
     d3dDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(CUSTOMVERTEX));
-    d3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Thorus::SIZE / 2);
+    d3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Thorus::SIZE / 3);
 }
 
 void Thorus::create(LPDIRECT3DDEVICE9 d3dDevice) {
     // create a vertex buffer interface called v_buffer
     d3dDevice->CreateVertexBuffer(Thorus::SIZE * sizeof(CUSTOMVERTEX),
-                                  0,
+                                  D3DUSAGE_WRITEONLY,
                                   Thorus::CUSTMFVF,
                                   D3DPOOL_MANAGED,
                                   &vertexBuffer,
@@ -53,4 +54,10 @@ void Thorus::create(LPDIRECT3DDEVICE9 d3dDevice) {
     vertexBuffer->Lock(0, 0, (void**)&pVoid, 0);
     memcpy(pVoid, vertices, sizeof(vertices));
     vertexBuffer->Unlock();
+}
+
+Thorus::~Thorus() {
+    if (vertexBuffer != NULL) {
+        vertexBuffer->Release();
+    }
 }

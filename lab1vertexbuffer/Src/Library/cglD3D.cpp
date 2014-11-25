@@ -83,7 +83,6 @@ cglD3D::cglD3D(const CreateParams &params)
 
   // Get caps for future use
   hRes = m_lpD3D9->GetDeviceCaps(0, D3DDEVTYPE_HAL, &m_caps);
-
   // Simply fill presentation parameters
   memset(&ppParams, 0, sizeof(D3DPRESENT_PARAMETERS));
   ppParams.Windowed               = TRUE; // We choose windowed mode
