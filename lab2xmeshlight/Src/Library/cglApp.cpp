@@ -173,23 +173,21 @@ bool cglApp::processInput(unsigned int nMsg, int wParam, long lParam)
 void cglApp::update(void)
 {
   m_timer.update();
+  static float rFPS = -1;
   float rTime = m_timer.getTime() - m_rPrevTime;
+  std::wostringstream fpsStream; 
+  fpsStream << getWindowText();
   if (rTime > s_fpsMeasurementTime)
   {
     // Calculate FPS
-    float rFPS = float(m_nFrameCount) / rTime;
-    // Show fps
-    //char fpsString[50];
-    //sprintf_s(fpsString, "%s FPS = %3.6f", getWindowText(), rFPS);
-    std::wostringstream fpsStream;
-    fpsStream << getWindowText();
-    fpsStream << L"FPS = " << std::setprecision(1) << rFPS;
-    
-    SetWindowText(HWND(m_hWnd), fpsStream.str().c_str());
+    rFPS = float(m_nFrameCount) / rTime;
     // Drop
     m_rPrevTime   = m_timer.getTime();
     m_nFrameCount = 0;
   }
+  if (rFPS != -1)
+    fpsStream << L"; FPS = " << std::setprecision(1) << rFPS;
+  SetWindowText(HWND(m_hWnd), fpsStream.str().c_str());
   m_nFrameCount++;
 } 
 

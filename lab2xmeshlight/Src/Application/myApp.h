@@ -60,6 +60,7 @@ public:
     virtual void renderInternal();
 
 protected:
+    wchar_t const *getWindowText() { return L"Lab2: mesh and lights"; }
     virtual void update();
 
 private:
