@@ -17,6 +17,8 @@ void CartesianCoordinateSystem::render() {
         throw std::runtime_error("LPDIRECT3DEVICE is null! Probably you does't call create(...) method!");
     }
     d3dDevice->SetFVF(CartesianCoordinateSystem::FVF);
+    d3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+    d3dDevice->SetTransform(D3DTS_WORLD, this->getWorldMatrix());
     d3dDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(SimpleVertex));
     d3dDevice->DrawPrimitive(D3DPT_LINELIST, 0, VERTEX_NUMBER / 2);
 }

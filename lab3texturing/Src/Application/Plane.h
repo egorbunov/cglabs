@@ -79,6 +79,12 @@ public:
             throw std::runtime_error("LPDIRECT3DEVICE is null! Probably you does't call create(...) method!");
         }
         d3dDevice->SetFVF(FVF);
+        d3dDevice->SetRenderState(D3DRS_LIGHTING, true);
+        d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+        d3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+
+        d3dDevice->SetTransform(D3DTS_WORLD, getWorldMatrix());
+
         d3dDevice->SetStreamSource(0, vertexBuffer, 0, sizeof(VertexWithNormal));
         d3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, vertexNumber / 3);
     }
