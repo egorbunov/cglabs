@@ -1,0 +1,29 @@
+#include "Transform.h"
+
+void Transform::translate(float dx, float dy, float dz) {
+    D3DXMATRIX t;
+    D3DXMatrixTranslation(&t, dx, dy, dz);
+    D3DXMatrixMultiply(&matrix, &matrix, &t);
+}
+
+void Transform::rotateX(float angle) {
+}
+
+void Transform::rotateY(float angle) {
+}
+
+void Transform::rotateZ(float angle) {
+}
+
+void Transform::scale(float sx, float sy, float sz) {
+}
+
+
+
+const D3DXMATRIX* Transform::getTransformMatrix() const {
+    return &matrix;
+}
+
+Transform::Transform(const Transform &obj) {
+    matrix = obj.matrix;
+}

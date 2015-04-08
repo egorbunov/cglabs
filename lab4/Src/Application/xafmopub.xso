@@ -1,0 +1,59 @@
+#ifndef TRANSFORM_H_INCLUDED__
+#define TRANSFORM_H_INCLUDED__
+
+#include <d3d9.h>
+#include <d3dx9.h>
+
+class Transform {
+protected:
+    D3DXMATRIX matrix;
+    D3DXMATRIX rotMat;
+    D3DXMATRIX sclMat;
+    D3DXMATRIX trsMat; // translation
+
+    float pitch;
+    float yaw;
+    float roll;
+
+    float x;
+    float y;
+    float z;
+
+    float sx;
+    float sy;
+    float sz;
+
+    void updateMatrix();
+public:
+    Transform() {
+        pitch = yaw = roll = x = y = z =  0.0f;
+        sx = sy = sz = 1.0f;
+    }
+
+    virtual Transform* reset() {
+        D3DXMatrixIdentity(&matrix);
+        return this;
+    }
+
+    virtual void translate(float dx, float dy, float dz);
+
+    virtual void rotateX(float angle);
+
+    virtual void rotateY(float angle);
+
+    virtual void rotateZ(float angle);
+
+    virtual void scale(float sx, float sy, float sz);
+
+    const D3DXMATRIX* getTransformMatrix();
+
+    const D3DXMATRIX* getRotationMatrix();
+
+    const D3DXMATRIX* getScaleMatrix();
+
+    const D3DXMATRIX* getTranslationMatrix();
+
+    Transform(const Transform &obj);
+};
+
+#endif

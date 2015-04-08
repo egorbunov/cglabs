@@ -24,7 +24,6 @@
 #include "commonUtils.h"
 #include "CartesianCoordinateSystem.h"
 #include "Camera.h"
-#include "XMeshObject.h"
 #include "CircleIterator.h"
 #include "WASDCamera.h"
 #include "LightSource.h"
@@ -32,7 +31,10 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Plane.h"
-#include "texture_objects.h"
+#include "Cylinder.h"
+#include "RandomRotation.h"
+
+#include "Skeleton.h"
 
 
 
@@ -63,37 +65,28 @@ public:
     virtual void renderInternal();
 
 protected:
-    virtual wchar_t const *getWindowText() { 
-        static wchar_t str[100];
-        swprintf(str, 100, L"Lab 3; Bias = %f", mipMapBias);
-        return str;
-    }
     virtual void update();
     void doTransformations();
 
 private:
-    static const int MIPMAPS[3];
-    static const int MIN_MAG[2];
-    static const std::vector<LPCWSTR> MIPMAP_FILENAMES;
-
-    std::vector<TexturedSquare *> texturedObjects;
-    Camera camera;
-    WASDCamera wasdCamera;
-    CartesianCoordinateSystem globalCoordSystem;
-    XMeshObject airplane;
-    CircleIterator *circleIterator;
-    Plane plane;
+    // camera stuff
     bool isWASDCameraActive;
-    int mimpmapIndex;
-    int minIndex;
-    int magIndex;
-    float mipMapBias;
+    Camera *camera;
+    WASDCamera *wasdCamera;
 
+    // iterator for rotating something...
+    CircleIterator *circleIterator;
     D3DMATERIAL9 globalMaterial;
 
     // lights
     std::vector<LightSource*> lights;
 
+    std::vector<RenderableObject*> objects;
+
+    Skeleton *mSkeleton;
+
+    // for animation
+    std::vector<RandomRotation*> randomRotations;
 
     enum
     {
@@ -115,6 +108,9 @@ private:
     D3DXMATRIX m_matWorld;
     D3DXMATRIX m_matView;
     D3DXMATRIX m_matProj;
+
+    void prepareLights();
+    void prepareSkeleton();
 };
 
 

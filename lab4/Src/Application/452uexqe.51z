@@ -1,0 +1,85 @@
+#include "Transform.h"
+
+void Transform::translate(float dx, float dy, float dz) {
+    x += dx;
+    y += dy;
+    z += dz;
+}
+
+void Transform::rotateX(float angle) {
+    pitch += angle;
+}
+
+void Transform::rotateY(float angle) {
+    yaw += angle;
+}
+
+void Transform::rotateZ(float angle) {
+    roll += angle;
+}
+
+const D3DXMATRIX* Transform::getRotationMatrix() {
+    D3DXMATRIX tmp;
+    D3DXMatrixRotationX(&tmp, pitch);         // Pitch
+    D3DXMatrixMultiply(&rotMat, &rotMat, &tmp);
+    D3DXMatrixRotationY(&tmp, yaw);           // Yaw
+    D3DXMatrixMultiply(&rotMat, &rotMat, &tmp);
+    D3DXMatrixRotationZ(&tmp, roll);          // Roll
+    D3DXMatrixMultiply(&rotMat, &rotMat, &tmp);
+    return &rotMat;
+}
+
+const D3DXMATRIX* Transform::getTranslationMatrix() {
+    D3DXMatrixTranslation(&trsMat, x, y, z);
+    return &trsMat;
+}
+
+const D3DXMATRIX* Transform::getScaleMatrix() {
+    D3DXMatrixScaling(&sclMat, sx, sy, sz);
+    return &sclMat;
+}
+
+
+
+void Transform::scale(float sx, float sy, float sz) {
+    this->sx = sx;
+    this->sy = sy;
+    this->sz = sz;
+}
+
+const D3DXMATRIX* Transform::getTransformMatrix() {
+    D3DXMATRIX tmp;
+    D3DXMATRIX rotation;
+
+    D3DXMatrixTranslation(&matrix, x, y, z);
+    D3DXMatrixIdentity(&rotation);
+
+    if (pitch || yaw || roll) {
+        // Produce and combine the rotation matrices.
+        D3DXMatrixRotationX(&tmp, pitch);         // Pitch
+        D3DXMatrixMultiply(&rotation, &rotation, &tmp);
+        D3DXMatrixRotationY(&tmp, yaw);           // Yaw
+        D3DXMatrixMultiply(&rotation, &rotation, &tmp);
+        D3DXMatrixRotationZ(&tmp, roll);          // Roll
+        D3DXMatrixMultiply(&rotation, &rotation, &tmp);
+
+        D3DXMatrixMultiply(&matrix, &rotation, &matrix);
+    }
+
+    D3DXMatrixScaling(&tmp, sx, sy, sz);
+    D3DXMatrixMultiply(&matrix, &matrix, &tmp);
+
+
+    return &matrix;
+}
+
+Transform::Transform(const Transform &obj) {
+    rotMat = obj.rotMat;
+    trsMat = obj.trsMat;
+    sclMat = obj.sclMat;
+
+    sx = obj.sx;
+    sy = obj.sy;
+
+
+}

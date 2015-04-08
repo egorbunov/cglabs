@@ -1,0 +1,10 @@
+#include "Skeleton.h"
+
+Skeleton::Skeleton(RenderableObject *object) {
+
+}
+Skeleton::~Skeleton();
+
+void render(const D3DXMATRIX* pTransform = nullptr);
+void addChild(Skeleton *child);
+void clean();
