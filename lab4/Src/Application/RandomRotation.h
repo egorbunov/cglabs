@@ -8,7 +8,7 @@
 
 class RandomRotation {
 private:
-    const float MAX_STEP = 0.025f;
+    const float MAX_STEP = 0.002f;
 
     std::random_device rd;
     std::mt19937 gen;
@@ -18,11 +18,13 @@ private:
     float high;
     float cur;
     float step;
+    float minStep;
 
     std::vector<TransformableObject *> objects;
     std::vector<std::function<void(TransformableObject*, float val) > > callbacks;
 public:
-    RandomRotation(float low, float high) : low(low), high(high), cur(low), gen(rd()), unifDist(-MAX_STEP, MAX_STEP) {
+    RandomRotation(float low, float high, float minStep, float maxStep) : low(low), high(high), cur(low), 
+        minStep(minStep), gen(rd()), unifDist(minStep, maxStep) {
         step = unifDist(gen);
     }
 
@@ -35,7 +37,7 @@ public:
         cur += step;
         if (cur > high) {
             cur = high;
-            step = unifDist(gen);
+            step = -unifDist(gen);
         } else if (cur < low) {
             cur = low;
             step = unifDist(gen);

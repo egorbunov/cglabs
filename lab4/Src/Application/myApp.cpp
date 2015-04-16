@@ -38,8 +38,19 @@ namespace
 
 bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
 {
+    static bool isLButtonDown = false;
     switch (nMsg)
     {
+    case WM_LBUTTONDOWN:
+    {
+                           isLButtonDown = true;
+                           break;
+    }
+    case WM_LBUTTONUP: 
+    {
+                           isLButtonDown = false;
+                           break;
+    }
     case WM_CAPTURECHANGED:
     {
                               m_nPrevMouseX = m_nPrevMouseY = -100;
@@ -55,18 +66,21 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
                          int xPos = GET_X_LPARAM(lParam);
                          int yPos = GET_Y_LPARAM(lParam);
 
-                         if ((wParam & MK_LBUTTON) != 0 && m_nPrevMouseX >= 0 && !isWASDCameraActive) // 
-                         {
-                             camera->rotateAzimuth(-s_rMouseMove2Rotate * (xPos - m_nPrevMouseX));
-                             camera->rotateZenith(-s_rMouseMove2Rotate * (yPos - m_nPrevMouseY));
+                         if (isLButtonDown) {
+
+
+                             if ((wParam & MK_LBUTTON) != 0 && m_nPrevMouseX >= 0 && !isWASDCameraActive) // 
+                             {
+                                 camera->rotateAzimuth(-s_rMouseMove2Rotate * (xPos - m_nPrevMouseX));
+                                 camera->rotateZenith(-s_rMouseMove2Rotate * (yPos - m_nPrevMouseY));
+                             }
+
+                             if (isWASDCameraActive && m_nPrevMouseX >= 0) {
+                                 wasdCamera->rotate(-((float)xPos / SCREEN_WIDTH) + ((float)m_nPrevMouseX / SCREEN_WIDTH),
+                                                    -((float)yPos / SCREEN_HEIGHT) + ((float)m_nPrevMouseY / SCREEN_HEIGHT));
+
+                             }
                          }
-
-                         if (isWASDCameraActive && m_nPrevMouseX >= 0) {
-                             wasdCamera->rotate(((float)xPos / SCREEN_WIDTH) - ((float)m_nPrevMouseX / SCREEN_WIDTH),
-                                               ((float)yPos / SCREEN_HEIGHT) - ((float)m_nPrevMouseY / SCREEN_HEIGHT));
-
-                         }
-
                          m_nPrevMouseX = xPos;
                          m_nPrevMouseY = yPos;
                          break;
@@ -334,40 +348,40 @@ void myApp::prepareSkeleton() {
         Skeleton * nodeBell = new Skeleton(bell);
         nodeRope->addChild(nodeBell);
         
-        RandomRotation *rr = new RandomRotation(-0.02f, 0.02f);
-        rr->addTransformation(rope, [ropeHeight](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, ropeHeight / 2.0f, 0.0f);
+
+        
+        RandomRotation *rr = new RandomRotation(-0.2f, 0.2f, 0.002f, 0.003f);
+        rr->addTransformation(rope, [ropeHeight, bellRad](TransformableObject* o, float val) -> void {
+            o->rotateX(val);
+
+        });
+        randomRotations.push_back(rr);
+        
+        rr = new RandomRotation(-D3DX_PI, D3DX_PI, 0.002f, 0.003f);
+        rr->addTransformation(rope, [ropeHeight, transl](TransformableObject* o, float val) -> void {
+            o->translate(-transl.x, 0.0f, 0.0f);
             o->rotateY(val);
-            o->translate(0.0f, -ropeHeight / 2.0f, 0.0f);
-            o->transform(x);
+            o->translate(transl.x, 0.0f, 0.0f);
         });
         randomRotations.push_back(rr);
 
-        rr = new RandomRotation(-0.02f, 0.02f);
-        rr->addTransformation(rope, [ropeHeight](TransformableObject* o, float val) -> void {
+        
+        rr = new RandomRotation(-0.05f, 0.05f, 0.002f, 0.004f);
+        rr->addTransformation(bell, [ropeHeight, bellHeight, ropeInBellH](TransformableObject* o, float val) -> void {
             Transform x = *(o->getWorldTransfrom());
             o->transform(Transform::getInverse(x));
-            o->translate(0.0f, -ropeHeight / 2, 0.0f);
+            o->translate(0.0f, 0.0f, -bellHeight / 2 + ropeInBellH);
             o->rotateZ(val);
-            o->translate(0.0f, ropeHeight / 2, 0.0f);
-
+            o->translate(0.0f, 0.0f, bellHeight / 2 - ropeInBellH);
             o->transform(x);
         });
         randomRotations.push_back(rr);
+        
 
-        rr = new RandomRotation(-0.02f, 0.02f);
-        rr->addTransformation(bell, [ropeHeight](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, -ropeHeight / 2, 0.0f);
-            o->rotateZ(val);
-            o->translate(0.0f, ropeHeight / 2, 0.0f);
-
-            o->transform(x);
-        });
-        randomRotations.push_back(rr);
+        
+        
+        
+        
 
         return nodeBell;
     };
@@ -384,35 +398,41 @@ void myApp::prepareSkeleton() {
 
         Skeleton * nodeBell = new Skeleton(bell);
         nodeRope->addChild(nodeBell);
+        
+        
+        RandomRotation *rr = new RandomRotation(-0.06f, 0.06f, 0.002f, 0.003f);
+        rr->addTransformation(rope, [ropeHeight, bellRad](TransformableObject* o, float val) -> void {
+            Transform x = *(o->getWorldTransfrom());
+            o->transform(Transform::getInverse(x));
+            o->translate(0.0f, 0.0f, -ropeHeight / 2 + bellRad);
+            o->rotateX(val);
+            o->translate(0.0f, 0.0f, ropeHeight / 2 - bellRad);
+            o->transform(x);
+        });
+        randomRotations.push_back(rr);
+        
+
+        rr = new RandomRotation(-0.03f, 0.03f, 0.002f, 0.003f);
+        rr->addTransformation(bell, [bellHeight, ropeInBellH](TransformableObject* o, float val) -> void {
+            Transform x = *(o->getWorldTransfrom());
+            o->transform(Transform::getInverse(x));
+            o->translate(0.0f, 0.0f, -bellHeight / 2.0f + ropeInBellH);
+            o->rotateZ(val);
+            o->translate(0.0f, 0.0f, bellHeight / 2.0f - ropeInBellH);
+            o->transform(x);
+        });
 
         
-        RandomRotation *rr = new RandomRotation(-0.01f, 0.01f);
-        rr->addTransformation(rope, [](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->rotateZ(val);
-            o->transform(x);
-        });
         randomRotations.push_back(rr);
 
-        rr = new RandomRotation(-0.03f, 0.03f);
-        rr->addTransformation(bell, [bellHeight](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, bellHeight / 2.0f, 0.0f);
-            o->rotateZ(val);
-            o->translate(0.0f, -bellHeight / 2.0f, 0.0f);
-            o->transform(x);
-        });
-        randomRotations.push_back(rr);
+        
+        
         
 
         return nodeBell;
     };
 
 
-    //{ crossHeight / 2 - bellRad, ropeHeight / 2, 0.0f }
-    //crossHeight / 2 - bellRad, 0.0f, -ropeHeight / 2
     Skeleton* bell = addToCross(nodeCrossA, { crossHeight / 2 - bellRad, ropeHeight / 2, 0.0f });
     addToBell(bell, { 0.0f, -(ropeHeight / 2 + bellHeight / 2) + ropeInBellH, 0.0f });
 
@@ -423,17 +443,20 @@ void myApp::prepareSkeleton() {
     addToCross(nodeCrossB, { -(crossHeight / 2 - bellRad), ropeHeight / 2, 0.0f });
 
     
-    RandomRotation *rr = new RandomRotation(-D3DX_PI / 4, D3DX_PI / 4);
+    RandomRotation *rr = new RandomRotation(-D3DX_PI / 4, D3DX_PI / 4, 0.005f, 0.006f);
     rr->addTransformation(rootRope, [](TransformableObject* o, float val) -> void {
         o->rotateY(val);
     });
     randomRotations.push_back(rr);
 
-    rr = new RandomRotation(-0.03f, 0.03f);
+    rr = new RandomRotation(-0.1f, 0.1f, 0.001f, 0.002f);
     rr->addTransformation(rootRope, [](TransformableObject* o, float val) -> void {
         o->rotateX(val);
     });
     randomRotations.push_back(rr);
+    
+    
+
     
 
     //
