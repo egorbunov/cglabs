@@ -268,14 +268,16 @@ void myApp::init_graphics() {
 
     // creating coordinate system (view)
     CartesianCoordinateSystem *globalCoordSystem = new CartesianCoordinateSystem(m_d3ddev, 0xF58F00);
-    globalCoordSystem->translate(-0.5, 0, -0.5);
-    globalCoordSystem->scale(220.0f, 220.0f, 220.0f);
+    globalCoordSystem->translate(-0.5f, 0.0f, -0.5f);
+    globalCoordSystem->scale(200.0f, 200.0f, 200.0f);
+    globalCoordSystem->translate(0.0f, -100.0f, 0.0f);
 
     objects.push_back(globalCoordSystem);
 
     // creating plane
-    Plane *plane = new Plane(m_d3ddev, 0, 0.005f);
-    plane->scale(100, 100, 100);
+    Plane *plane = new Plane(m_d3ddev, 0.0f, 0.005f);
+    plane->scale(100.0f, 100.0f, 100.0f);
+    plane->translate(0.0f, -100.0f, 0.0f);
     objects.push_back(plane);
 
     //objects.push_back(new Cylinder(m_d3ddev, D3DXVECTOR3(0.0f, 0.0f, 0.0f), { D3DX_PI / 2, 0.0f, 0.0f }, 25, 50, hexToColor(0xC91B12)));
@@ -311,7 +313,7 @@ void myApp::prepareSkeleton() {
 
     Cylinder *rootRope = new Cylinder(m_d3ddev, ropeRad, rootRopeHeight, hexToColor(0x616161));
 
-    float height = 200;
+    float height = 80.0f;
 
     // initializing root of the structure and 2 crossing cylinders
     mSkeleton = new Skeleton(rootRope);
@@ -376,13 +378,7 @@ void myApp::prepareSkeleton() {
             o->transform(x);
         });
         randomRotations.push_back(rr);
-        
-
-        
-        
-        
-        
-
+       
         return nodeBell;
     };
 
