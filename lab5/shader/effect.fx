@@ -4,6 +4,13 @@ float4x4 g_worldViewMat;
 float4x4 g_projMat;
 
 texture  g_txCubeMap;
+texture faceTex_1;
+texture faceTex_2;
+texture faceTex_3;
+texture faceTex_4;
+texture faceTex_5;
+texture faceTex_6;
+
 
 samplerCUBE g_envCubeTexture = 
 sampler_state
@@ -14,23 +21,48 @@ sampler_state
     MipFilter = Linear;
 };
 
-void mirror_VS(float4 Pos : POSITION,
-               float3 Normal : NORMAL,
-               out float4 oPos : POSITION,
-               out float3 EnvTex : TEXCOORD0)
+sampler2D textureSampler = sampler_state {
+    Texture = (faceTex_1);
+    MinFilter = Linear;
+    MagFilter = Linear;
+    AddressU = Clamp;
+    AddressV = Clamp;
+};
+
+struct vs_in_t
 {
-    oPos = mul(Pos, g_worldViewMat);
+    float4 pos : POSITION;
+    float3 normal : NORMAL;
+    float2 tex_coord : TEXCOORD0;
+};
+
+struct vs_out_t
+{
+    float4 pos : POSITION;
+    float2 tex : TEXCOORD0;
+    float3 envTex : TEXCOORD1;
+
+};
+
+
+vs_out_t mirror_VS(vs_in_t vs_in)
+{
+    vs_out_t vs_out = (vs_out_t)0;
+
+    vs_out.tex = vs_in.tex_coord;
+
+    vs_out.pos = mul(vs_in.pos, g_worldViewMat);
 
     //
     // Compute normal in camera space
     //
-    float3 vN = mul(Normal, g_worldViewMat);
+    float3 vN = mul(vs_in.normal, g_worldViewMat);
     vN = normalize(vN);
 
     //
     // Obtain the reverse eye vector
     //
-    float3 vEyeR = -normalize(oPos);
+    float3 vEyeR = -normalize(vs_out.pos);
 
         //
         // Compute the reflection vector
@@ -40,17 +72,20 @@ void mirror_VS(float4 Pos : POSITION,
         //
         // Store the reflection vector in texcoord0
         //
-        EnvTex = vRef;
+        vs_out.envTex = vRef;
 
     //
     // Apply the projection
     //
-    oPos = mul(oPos, g_projMat);
+    vs_out.pos = mul(vs_out.pos, g_projMat);
+
+    return vs_out;
 }
 
-float4 mirror_PS(float3 Tex : TEXCOORD0) : COLOR
+float4 mirror_PS(vs_out_t ps_in) : COLOR0
 {
-    return 1.0 * texCUBE(g_envCubeTexture, Tex);
+    //return 1.0 * texCUBE(g_envCubeTexture, ps_in.envTex);
+    return tex2D(textureSampler, ps_in.tex) * texCUBE(g_envCubeTexture, ps_in.envTex);
 }
 
 technique mirror_technique

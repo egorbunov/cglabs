@@ -14,12 +14,12 @@ ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
     device = d3dDevice;
 
 
-    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES));
-    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, MIPMAP_FILENAMES));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, MIPMAP_FILENAMES));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, MIPMAP_FILENAMES, false));
 
     LPD3DXBUFFER pErrors = NULL;
     LPD3DXBUFFER pShaderBuff = NULL;
@@ -116,17 +116,18 @@ void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objec
         device->Clear(0L, NULL, D3DCLEAR_ZBUFFER,
                       0x000000ff, 1.0f, 0L);
 
+        Transform t;
         if (SUCCEEDED(device->BeginScene()))
         {
             for (RenderableObject *ro : objects) {
-                ro->render(ro->getWorldTransfrom());
+                ro->render(&t);
             }
 
             // End the scene.
             device->EndScene();
         }
 
-        /* To check if it works (it works!)
+        /*To check if it works (it works!)
         D3DXSaveSurfaceToFile(names[nFace], D3DXIFF_JPG, pSurf, NULL, NULL);
         if (pSurf)
             pSurf->Release();
@@ -154,7 +155,6 @@ void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objec
 }
 
 void ReflectingCube::render(const Transform *worldTransform) {
-    
     HRESULT hr;
 
     device->SetVertexDeclaration(m_vertexDeclaration);
@@ -163,7 +163,6 @@ void ReflectingCube::render(const Transform *worldTransform) {
     device->GetTransform(D3DTS_PROJECTION, &projMat);
 
     D3DXMatrixMultiply(&viewMat, worldTransform->getTransformMatrix(), &viewMat);
-
 
     hr = effect->SetMatrix("g_worldViewMat", &viewMat);
     hr = effect->SetMatrix("g_projMat", &projMat);
@@ -175,13 +174,23 @@ void ReflectingCube::render(const Transform *worldTransform) {
 
     hr = effect->Begin(&num_passes, 0);
 
+    std::string s = "faceTex_";
+    char i = '1';
+    for (TexturedSquare* f : faces) {
+        s.push_back(i++);
+        effect->SetTexture(s.c_str(), f->getTexture());
+        s.pop_back();
+    }
+
     Transform t;
     for (size_t i = 0; i < num_passes; ++i)
     {
         hr = effect->BeginPass(i);
+
         for (TexturedSquare* f : faces) {
             f->render(&t);
         }
+
         hr = effect->EndPass();
 
     }

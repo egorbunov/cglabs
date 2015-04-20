@@ -2,7 +2,7 @@
 
 // Base class implementation **************************
 
-TexturedObject::TexturedObject(LPDIRECT3DDEVICE9 device) {
+TexturedObject::TexturedObject(LPDIRECT3DDEVICE9 device, bool useTex) : useTex(useTex) {
     d3dDevice = device;
     vbuffer = NULL;
     pTexture = NULL;
@@ -18,11 +18,15 @@ IDirect3DTexture9* TexturedObject::getTexture() {
     return pTexture;
 }
 
+
+
 void TexturedObject::render(const Transform *worldTransform) {
-    d3dDevice->SetFVF(TEXTURE_VERTEX_FVF);
-    d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
-    d3dDevice->SetTexture(0, pTexture);
-    d3dDevice->SetTransform(D3DTS_WORLD, worldTransform->getTransformMatrix());
+    if (useTex) {
+        d3dDevice->SetFVF(TEXTURE_VERTEX_FVF);
+        d3dDevice->SetTexture(0, pTexture);
+        d3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+        d3dDevice->SetTransform(D3DTS_WORLD, worldTransform->getTransformMatrix());
+    }
 
     d3dDevice->SetStreamSource(0, vbuffer, 0, sizeof(TEXTURE_VERTEX_WITH_NORMAL));
     d3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, triangleCount);
@@ -47,8 +51,9 @@ void TexturedObject::setVertices(const std::vector<TEXTURE_VERTEX_WITH_NORMAL> v
 
 
 // TexturedSquare
-TexturedSquare::TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& vect, const D3DXVECTOR3& shift, float size, std::vector<LPCWSTR> mipmapFilenames)
-: TexturedObject(device) {
+TexturedSquare::TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& vect, const D3DXVECTOR3& shift, float size, 
+    std::vector<LPCWSTR> mipmapFilenames, bool useTex)
+: TexturedObject(device, useTex) {
 
     std::vector<TEXTURE_VERTEX_WITH_NORMAL> vertices;
     D3DXVECTOR3 normal = vect;

@@ -156,7 +156,9 @@ void myApp::renderInternal()
     }
 
     reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
+
     reflectingCube->render(reflectingCube->getWorldTransfrom());
+
     m_d3ddev->SetMaterial(&globalMaterial);
     for (RenderableObject *obj : aroundCubeObjects) {
         obj->render(obj->getWorldTransfrom());
@@ -259,7 +261,7 @@ void myApp::init_graphics() {
                                D3DXToRadian(45),    // the horizontal field of view
                                (FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, // aspect ratio
                                1.0f,    // the near view-plane
-                               10000.0f);    // the far view-plane
+                               20000.0f);    // the far view-plane
     m_d3ddev->SetTransform(D3DTS_PROJECTION, &m_matProj);    // set the projection
 
     prepareLights();
@@ -292,7 +294,6 @@ void myApp::doTransformations() {
 namespace {
 
 }
-
 
 void myApp::update()
 {

@@ -11,16 +11,16 @@
 struct TEXTURE_VERTEX_WITH_NORMAL { FLOAT X, Y, Z; D3DVECTOR NORMAL; FLOAT U, V; };
 
 
-class TexturedObject : public RenderableObject {
-
+class TexturedObject : public RenderableObject {  
 public:
-    TexturedObject(LPDIRECT3DDEVICE9);
+    TexturedObject(LPDIRECT3DDEVICE9, bool useTex = true);
     ~TexturedObject();
     void render(const Transform *worldTransform);
     void setVertices(const std::vector<TEXTURE_VERTEX_WITH_NORMAL>);
     IDirect3DTexture9* getTexture();
 
 protected:
+    bool useTex;
     int triangleCount;
     LPDIRECT3DVERTEXBUFFER9 vbuffer;
     IDirect3DTexture9 *pTexture;
@@ -31,7 +31,9 @@ protected:
 // Textured rectangle
 class TexturedSquare : public TexturedObject {
 public:
-    TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& normal, const D3DXVECTOR3& shift, float size, std::vector<LPCWSTR>);
+    TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& normal, const D3DXVECTOR3& shift, float size, 
+        std::vector<LPCWSTR>, bool useTex = true);
+
 };
 
 #endif
