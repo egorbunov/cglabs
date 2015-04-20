@@ -22,12 +22,12 @@ ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
     device = d3dDevice;
 
 
-    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, FACE_1_TEXS, 128, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, FACE_2_TEXS, 128, false));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, FACE_3_TEXS, 128, false));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, FACE_4_TEXS, 128, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, FACE_5_TEXS, 128, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, FACE_6_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, FACE_1_TEXS, 1024, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, FACE_2_TEXS, 1024, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, FACE_3_TEXS, 1024, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, FACE_4_TEXS, 1024, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, FACE_5_TEXS, 1024, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, FACE_6_TEXS, 1024, false));
 
     LPD3DXBUFFER pErrors = NULL;
     LPD3DXBUFFER pShaderBuff = NULL;
