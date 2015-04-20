@@ -14,6 +14,8 @@ class ReflectingCube : public RenderableObject {
     IDirect3DVertexDeclaration9 *m_vertexDeclaration;
     IDirect3DCubeTexture9* cubeEnvTexture;
     std::vector<TexturedSquare*> faces;
+
+    const D3DMATRIX* curViewMat;
 public:
     ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice);
     ~ReflectingCube();

@@ -4,12 +4,6 @@
     <ClCompile Include="Src\Application\Camera.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\CartesianCoordinateSystem.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\CircleIterator.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
@@ -57,34 +51,13 @@
     <ClInclude Include="Src\Application\Camera.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\CartesianCoordinateSystem.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\CircleIterator.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\commonUtils.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\DirectedLight.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\LightSource.h">
-      <Filter>headers</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\myApp.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\Plane.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\PointLight.h">
-      <Filter>headers</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\TransformableObject.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\SpotLight.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\WASDCamera.h">

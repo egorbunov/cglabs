@@ -21,15 +21,8 @@
 
 #include "Library/cglApp.h"
 
-#include "commonUtils.h"
-#include "CartesianCoordinateSystem.h"
 #include "Camera.h"
-#include "CircleIterator.h"
 #include "WASDCamera.h"
-#include "LightSource.h"
-#include "DirectedLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
 #include "Plane.h"
 #include "Cylinder.h"
 #include "SkyBox.h"
@@ -65,7 +58,6 @@ public:
 
 protected:
     virtual void update();
-    void doTransformations();
 
 private:
     static const int MIPMAPS[3];
@@ -80,12 +72,7 @@ private:
     Camera *camera;
     WASDCamera *wasdCamera;
 
-    // iterator for rotating something...
-    CircleIterator *circleIterator;
     D3DMATERIAL9 globalMaterial;
-
-    // lights
-    std::vector<LightSource*> lights;
 
     ReflectingCube *reflectingCube;
     std::vector<RenderableObject*> objects;
@@ -112,8 +99,6 @@ private:
     D3DXMATRIX m_matWorld;
     D3DXMATRIX m_matView;
     D3DXMATRIX m_matProj;
-
-    void prepareLights();
 };
 
 

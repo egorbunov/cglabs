@@ -7,7 +7,9 @@
 #include <vector>
 
 #include "RenderableObject.h"
-#include "commonUtils.h"
+#include "my_utils.h"
+
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_NORMAL)
 
 class XMeshObject : public RenderableObject {
 private:

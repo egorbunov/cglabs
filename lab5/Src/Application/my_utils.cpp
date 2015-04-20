@@ -1,15 +1,5 @@
 #include "my_utils.h"
 
-std::string GetFileAsString(const std::string& strFileName)
-{
-    std::string content;
-    std::ifstream in(strFileName.c_str(), std::ios::binary);
-    std::istreambuf_iterator<char> begin(in), end;
-    while (begin != end)
-        content += *begin++;
-    return content;
-}
-
 D3DXMATRIX WINAPI DXUTGetCubeMapViewMatrix(DWORD dwFace)
 {
     D3DXVECTOR3 vEyePt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

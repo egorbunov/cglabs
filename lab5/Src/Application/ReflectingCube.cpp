@@ -33,6 +33,7 @@ ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
         { 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
         D3DDECL_END()
     };
+
     device->CreateVertexDeclaration(g_aVertDecl, &m_vertexDeclaration);
 
     
@@ -47,17 +48,16 @@ ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
         PostQuitMessage(EXIT_FAILURE);
         errors->Release();
     }
-   
 
 
-    hr = device->CreateCubeTexture(256,
+    hr = device->CreateCubeTexture(512,
                                    1,
                                    D3DUSAGE_RENDERTARGET,
                                    D3DFMT_A16B16G16R16F,
                                    D3DPOOL_DEFAULT,
                                    &cubeEnvTexture,
                                    NULL);
-                                   
+                                
 
 }
 
@@ -71,6 +71,7 @@ ReflectingCube::~ReflectingCube() {
 }
 
 void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objects) {
+    HRESULT hr;
 
     device->EndScene();
 
@@ -87,55 +88,44 @@ void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objec
     mViewDir._41 = mViewDir._42 = mViewDir._43 = 0.0f;
 
     LPDIRECT3DSURFACE9 pRTOld = NULL;
-    device->GetRenderTarget(0, &pRTOld);
+    hr = device->GetRenderTarget(0, &pRTOld);
+    if (FAILED(hr)) {MessageBox(NULL, L"Error: get render target", L"Error", MB_OK);}
+
     LPDIRECT3DSURFACE9 pDSOld = NULL;
-    device->GetDepthStencilSurface(&pDSOld);
-
-    /*
-    std::vector<LPCWSTR> names;
-    names.push_back(L"1.jpg");
-    names.push_back(L"2.jpg");
-    names.push_back(L"3.jpg");
-    names.push_back(L"4.jpg");
-    names.push_back(L"5.jpg");
-    names.push_back(L"6.jpg");
-    */
-
+    if (SUCCEEDED(device->GetDepthStencilSurface(&pDSOld))) {
+        // ok
+    }
 
     for (int nFace = 0; nFace < 6; ++nFace)
     {
         LPDIRECT3DSURFACE9 pSurf;
 
-        cubeEnvTexture->GetCubeMapSurface((D3DCUBEMAP_FACES)nFace, 0, &pSurf);
-        device->SetRenderTarget(0, pSurf);
+        hr = cubeEnvTexture->GetCubeMapSurface((D3DCUBEMAP_FACES)nFace, 0, &pSurf);
+        hr = device->SetRenderTarget(0, pSurf);
+        if (FAILED(hr)) { MessageBox(NULL, L"Error: render targer or cube map...", L"Error", MB_OK); }
 
         D3DXMATRIXA16 mView = DXUTGetCubeMapViewMatrix(nFace);
         D3DXMatrixMultiply(&mView, &mViewDir, &mView);
         device->SetTransform(D3DTS_VIEW, &mView);
 
-        device->Clear(0L, NULL, D3DCLEAR_ZBUFFER,
+        hr = device->Clear(0L, NULL, D3DCLEAR_ZBUFFER,
                       0x000000ff, 1.0f, 0L);
 
-        Transform t;
         if (SUCCEEDED(device->BeginScene()))
         {
             for (RenderableObject *ro : objects) {
-                ro->render(&t);
+                ro->render(ro->getWorldTransfrom());
             }
 
-            // End the scene.
             device->EndScene();
         }
-
-        /*To check if it works (it works!)
-        D3DXSaveSurfaceToFile(names[nFace], D3DXIFF_JPG, pSurf, NULL, NULL);
-        if (pSurf)
-            pSurf->Release();
-            */
 
         SAFE_RELEASE(pSurf);
 
     }
+
+    hr = device->Clear(0L, NULL, D3DCLEAR_ZBUFFER,
+                       0x000000ff, 1.0f, 0L);
 
     // Restore depth-stencil buffer and render target
     if (pDSOld)
@@ -151,7 +141,6 @@ void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objec
     device->SetTransform(D3DTS_PROJECTION, &matProjSave);
 
     device->BeginScene();
-
 }
 
 void ReflectingCube::render(const Transform *worldTransform) {
@@ -174,13 +163,8 @@ void ReflectingCube::render(const Transform *worldTransform) {
 
     hr = effect->Begin(&num_passes, 0);
 
-    std::string s = "faceTex_";
-    char i = '1';
-    for (TexturedSquare* f : faces) {
-        s.push_back(i++);
-        effect->SetTexture(s.c_str(), f->getTexture());
-        s.pop_back();
-    }
+    std::string s = "faceTex";
+    effect->SetTexture(s.c_str(), faces[0]->getTexture());
 
     Transform t;
     for (size_t i = 0; i < num_passes; ++i)

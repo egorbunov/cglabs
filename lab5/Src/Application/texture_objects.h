@@ -14,7 +14,7 @@ struct TEXTURE_VERTEX_WITH_NORMAL { FLOAT X, Y, Z; D3DVECTOR NORMAL; FLOAT U, V;
 class TexturedObject : public RenderableObject {  
 public:
     TexturedObject(LPDIRECT3DDEVICE9, bool useTex = true);
-    ~TexturedObject();
+    virtual ~TexturedObject();
     void render(const Transform *worldTransform);
     void setVertices(const std::vector<TEXTURE_VERTEX_WITH_NORMAL>);
     IDirect3DTexture9* getTexture();

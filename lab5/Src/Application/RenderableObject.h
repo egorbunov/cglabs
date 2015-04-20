@@ -5,6 +5,7 @@
 
 class RenderableObject : public TransformableObject {
 public:
+    virtual ~RenderableObject() = 0 {};
     virtual void render(const Transform *worldTransform) = 0;
 };
 

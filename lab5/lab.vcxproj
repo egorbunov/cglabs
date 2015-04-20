@@ -104,8 +104,6 @@
     <ClCompile Include="Src\Application\Transform.cpp" />
     <ClCompile Include="Src\Application\TransformableObject.cpp" />
     <ClCompile Include="Src\Application\Camera.cpp" />
-    <ClCompile Include="Src\Application\CartesianCoordinateSystem.cpp" />
-    <ClCompile Include="Src\Application\CircleIterator.cpp" />
     <ClCompile Include="Src\Application\main.cpp" />
     <ClCompile Include="Src\Application\myApp.cpp" />
     <ClCompile Include="Src\Application\WASDCamera.cpp" />
@@ -117,21 +115,14 @@
   <ItemGroup>
     <ClInclude Include="Src\Application\ReflectingCube.h" />
     <ClInclude Include="Src\Application\Cylinder.h" />
-    <ClInclude Include="Src\Application\DirectedLight.h" />
     <ClInclude Include="Src\Application\my_utils.h" />
     <ClInclude Include="Src\Application\Plane.h" />
-    <ClInclude Include="Src\Application\PointLight.h" />
     <ClInclude Include="Src\Application\RenderableObject.h" />
     <ClInclude Include="Src\Application\SkyBox.h" />
-    <ClInclude Include="Src\Application\SpotLight.h" />
     <ClInclude Include="Src\Application\texture_objects.h" />
     <ClInclude Include="Src\Application\Transform.h" />
     <ClInclude Include="Src\Application\TransformableObject.h" />
     <ClInclude Include="Src\Application\Camera.h" />
-    <ClInclude Include="Src\Application\CartesianCoordinateSystem.h" />
-    <ClInclude Include="Src\Application\CircleIterator.h" />
-    <ClInclude Include="Src\Application\commonUtils.h" />
-    <ClInclude Include="Src\Application\LightSource.h" />
     <ClInclude Include="Src\Application\myApp.h" />
     <ClInclude Include="Src\Application\WASDCamera.h" />
     <ClInclude Include="Src\Application\XMeshObject.h" />

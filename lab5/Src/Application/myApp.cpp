@@ -120,14 +120,6 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
                            m_pD3D->getDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, MIPMAPS[mimpmapIndex]);
                            break;
                        }
-
-                       // processing numeric key press (switch off/on lights)
-                       for (size_t i = 0; i < lights.size(); ++i) {
-                           if (std::to_string(i + 1).at(0) == (char)wParam) {
-                               lights[i]->changeState();
-                           }
-                       }
-
                        break;
     }
 
@@ -145,8 +137,6 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
 
 void myApp::renderInternal()
 {
-    doTransformations();
-
     static float u = 0;
     if (!isWASDCameraActive) {
         m_d3ddev->SetTransform(D3DTS_VIEW, camera->getViewMatrix());
@@ -155,9 +145,9 @@ void myApp::renderInternal()
         m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera->getViewMatrix());
     }
 
-    reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
+    //reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
 
-    reflectingCube->render(reflectingCube->getWorldTransfrom());
+    //reflectingCube->render(reflectingCube->getWorldTransfrom());
 
     m_d3ddev->SetMaterial(&globalMaterial);
     for (RenderableObject *obj : aroundCubeObjects) {
@@ -178,72 +168,10 @@ cglApp(nW, nH, hInst, nCmdShow)
     init_graphics();
 }
 
-
-void myApp::prepareLights() {
-    // one directed light and point light
-    lights.push_back(new DirectedLight(
-        D3DXVECTOR3(-1.0f, -1.0f, -1.0f),
-        hexToColor(0x403020),
-        hexToColor(0xffffff),
-        hexToColor(0)));
-    lights.push_back(new PointLight(
-        D3DXVECTOR3(60.0f, 40.0f, -70.0f),
-        200.0f,
-        5.0f,
-        0.000f,
-        0.050f,
-        0.001f,
-        hexToColor(0xCCFF66),
-        hexToColor(0xffffff),
-        hexToColor(0xffffff)
-        ));
-    lights.push_back(new PointLight(
-        D3DXVECTOR3(-60.0f, 30.0f, 70.0f),
-        200.0f,
-        1.0f,
-        0.000f,
-        0.050f,
-        0.001f,
-        hexToColor(0xffffff),
-        hexToColor(0xffffff),
-        hexToColor(0xffffff)
-        ));
-    lights.push_back(new PointLight(
-        D3DXVECTOR3(60.0f, 30.0f, 70.0f),
-        200.0f,
-        1.0f,
-        0.000f,
-        0.050f,
-        0.001f,
-        hexToColor(0xffffff),
-        hexToColor(0xffffff),
-        hexToColor(0xffffff)
-        ));
-    lights.push_back(new PointLight(
-        D3DXVECTOR3(-60.0f, 30.0f, -70.0f),
-        200.0f,
-        1.0f,
-        0.000f,
-        0.050f,
-        0.001f,
-        hexToColor(0xffffff),
-        hexToColor(0xffffff),
-        hexToColor(0xffffff)
-        ));
-
-    for (unsigned int i = 0; i < lights.size(); ++i) {
-        lights[i]->create(m_d3ddev, i);
-        lights[i]->switchOn();
-    }
-
-}
-
 void myApp::init_graphics() {
     m_d3ddev = m_pD3D->getDevice();
-    m_d3ddev->SetRenderState(D3DRS_LIGHTING, true);
-    m_d3ddev->SetRenderState(D3DRS_NORMALIZENORMALS, true);
+    m_d3ddev->SetRenderState(D3DRS_LIGHTING, false);
     m_d3ddev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    m_d3ddev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
     // creating cameras
     isWASDCameraActive = true;
@@ -264,8 +192,6 @@ void myApp::init_graphics() {
                                20000.0f);    // the far view-plane
     m_d3ddev->SetTransform(D3DTS_PROJECTION, &m_matProj);    // set the projection
 
-    prepareLights();
-    
     ZeroMemory(&globalMaterial, sizeof(D3DMATERIAL9)); // clear out the struct for use
     globalMaterial.Diffuse = hexToColor(0xffffff);
     globalMaterial.Ambient = hexToColor(0xffffff);
@@ -285,10 +211,7 @@ void myApp::init_graphics() {
 
     reflectingCube = new ReflectingCube(m_d3ddev);
     objects.push_back(reflectingCube);
-    reflectingCube->scale(100.0f, 100.0f, 100.0f);
-}
-
-void myApp::doTransformations() {
+    //reflectingCube->scale(100.0f, 100.0f, 100.0f);
 }
 
 namespace {
@@ -328,16 +251,10 @@ void myApp::update()
     }
 }
 
-myApp::~myApp() {
-    //delete circleIterator;
-
-    
+myApp::~myApp() {    
     delete wasdCamera;
     delete camera;
+
     for (RenderableObject *o : objects)
         delete o;
-
-    for (unsigned int i = 0; i < lights.size(); ++i) {
-        delete lights[i];
-    }
 }

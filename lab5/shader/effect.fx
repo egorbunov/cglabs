@@ -4,12 +4,7 @@ float4x4 g_worldViewMat;
 float4x4 g_projMat;
 
 texture  g_txCubeMap;
-texture faceTex_1;
-texture faceTex_2;
-texture faceTex_3;
-texture faceTex_4;
-texture faceTex_5;
-texture faceTex_6;
+texture faceTex;
 
 
 samplerCUBE g_envCubeTexture = 
@@ -22,7 +17,7 @@ sampler_state
 };
 
 sampler2D textureSampler = sampler_state {
-    Texture = (faceTex_1);
+    Texture = (faceTex);
     MinFilter = Linear;
     MagFilter = Linear;
     AddressU = Clamp;
@@ -85,7 +80,7 @@ vs_out_t mirror_VS(vs_in_t vs_in)
 float4 mirror_PS(vs_out_t ps_in) : COLOR0
 {
     //return 1.0 * texCUBE(g_envCubeTexture, ps_in.envTex);
-    return tex2D(textureSampler, ps_in.tex) * texCUBE(g_envCubeTexture, ps_in.envTex);
+    return texCUBE(g_envCubeTexture, ps_in.envTex);
 }
 
 technique mirror_technique
