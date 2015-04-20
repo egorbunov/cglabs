@@ -36,7 +36,7 @@
 #define SCREEN_WIDTH 1000
 #define SCREEN_HEIGHT 800
 
-#define CAMERA_SHIFT_STEP 8
+#define CAMERA_SHIFT_STEP 30
 
 // *******************************************************************
 // classes 

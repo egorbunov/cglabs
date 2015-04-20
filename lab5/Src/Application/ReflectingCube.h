@@ -7,8 +7,17 @@
 #include "my_utils.h"
 
 class ReflectingCube : public RenderableObject {
-    static const std::vector<LPCWSTR> MIPMAP_FILENAMES;
+    static const std::vector<LPCWSTR> FACE_1_TEXS;
+    static const std::vector<LPCWSTR> FACE_2_TEXS;
+    static const std::vector<LPCWSTR> FACE_3_TEXS;
+    static const std::vector<LPCWSTR> FACE_4_TEXS;
+    static const std::vector<LPCWSTR> FACE_5_TEXS;
+    static const std::vector<LPCWSTR> FACE_6_TEXS;
+
+
     LPDIRECT3DDEVICE9 device;
+
+    float fresnelPow;
 
     LPD3DXEFFECT effect;
     IDirect3DVertexDeclaration9 *m_vertexDeclaration;
@@ -22,6 +31,9 @@ public:
     void render(const Transform *worldTransform);
 
     void renderObjectsToCubeMap(std::vector<RenderableObject*> objects);
+
+    void incFresnelPow();
+    void decFresnelPow();
 };
 
 

@@ -32,7 +32,7 @@ protected:
 class TexturedSquare : public TexturedObject {
 public:
     TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& normal, const D3DXVECTOR3& shift, float size, 
-        std::vector<LPCWSTR>, bool useTex = true);
+                   std::vector<LPCWSTR>, int wid, bool useTex = true);
 
 };
 

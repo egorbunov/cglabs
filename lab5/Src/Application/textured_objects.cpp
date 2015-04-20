@@ -52,14 +52,14 @@ void TexturedObject::setVertices(const std::vector<TEXTURE_VERTEX_WITH_NORMAL> v
 
 // TexturedSquare
 TexturedSquare::TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& vect, const D3DXVECTOR3& shift, float size, 
-    std::vector<LPCWSTR> mipmapFilenames, bool useTex)
+                               std::vector<LPCWSTR> mipmapFilenames, int wid, bool useTex)
 : TexturedObject(device, useTex) {
 
     std::vector<TEXTURE_VERTEX_WITH_NORMAL> vertices;
     D3DXVECTOR3 normal = vect;
     D3DXVec3Normalize(&normal, &normal);
 
-    const int n = 100;
+    const int n = 10;
     const float min = -size / 2;
     const float max = size / 2;
     const float step = size / n;
@@ -102,8 +102,8 @@ TexturedSquare::TexturedSquare(LPDIRECT3DDEVICE9 device, const D3DXVECTOR3& vect
             vertices.push_back(v4);
         }
     }
-    const UINT width = 1024;
-    const UINT height = 1024;
+    const UINT width = wid;
+    const UINT height = wid;
     IDirect3DTexture9* prevTexture = NULL;
 
     D3DXCreateTexture(d3dDevice, width, height, mipmapFilenames.size(), 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &this->pTexture);

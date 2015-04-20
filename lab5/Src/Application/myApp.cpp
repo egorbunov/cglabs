@@ -145,9 +145,9 @@ void myApp::renderInternal()
         m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera->getViewMatrix());
     }
 
-    //reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
+    reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
 
-    //reflectingCube->render(reflectingCube->getWorldTransfrom());
+    reflectingCube->render(reflectingCube->getWorldTransfrom());
 
     m_d3ddev->SetMaterial(&globalMaterial);
     for (RenderableObject *obj : aroundCubeObjects) {
@@ -179,8 +179,8 @@ void myApp::init_graphics() {
     wasdCamera = new WASDCamera();
     camera = new Camera();
 
-    float initPos = 250.0f;
-    wasdCamera->setPosition({ initPos, 0.0f, initPos });
+    float initPos = 500.0f;
+    wasdCamera->setPosition({ initPos, -initPos, initPos });
     wasdCamera->setUpDirection({ 0.0f, 1.0f, 0.0f });
     wasdCamera->setLookAt(worldCenter);
     m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera->getViewMatrix());    // set the view transform to matView
@@ -211,7 +211,7 @@ void myApp::init_graphics() {
 
     reflectingCube = new ReflectingCube(m_d3ddev);
     objects.push_back(reflectingCube);
-    //reflectingCube->scale(100.0f, 100.0f, 100.0f);
+    reflectingCube->scale(200.0f, 200.0f, 200.0f);
 }
 
 namespace {
@@ -238,6 +238,11 @@ void myApp::update()
         dr -= s_rKbd2Zoom * m_timer.getDelta();
     if (m_keysPressed[VK_ADD])
         dr += s_rKbd2Zoom * m_timer.getDelta();
+
+    if (m_keysPressed['Z'])
+        reflectingCube->decFresnelPow();
+    if (m_keysPressed['X'])
+        reflectingCube->incFresnelPow();
 
     if (isWASDCameraActive) {
         if (m_keysPressed['A'])

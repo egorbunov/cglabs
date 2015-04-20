@@ -2,7 +2,7 @@ static const int MAX_MATRICES = 32;
 
 float4x4 g_worldViewMat;
 float4x4 g_projMat;
-float g_fresPow;
+
 texture  g_txCubeMap;
 texture faceTex;
 
@@ -43,18 +43,23 @@ vs_out_t mirror_VS(vs_in_t vs_in)
 {
     vs_out_t vs_out = (vs_out_t)0;
 
-    vs_out.tex = vs_in.tex_coord; // object real tex coord
+    vs_out.tex = vs_in.tex_coord;
+
     vs_out.pos = mul(vs_in.pos, g_worldViewMat);
+
     float3 vN =  mul(vs_in.normal, (float3x3) g_worldViewMat); // normal in camera space
     vN = normalize(vN);
-    float3 vEyeR = (float3) -normalize(vs_out.pos); // the reverse eye vector
+
+    float3 vEyeR = -normalize(vs_out.pos); // the reverse eye vector
+
     float3 vRef = 2 * dot(vEyeR, vN) * vN - vEyeR; // reflection
+
     vs_out.envTex = vRef; // save in tex coord
+
     vs_out.pos = mul(vs_out.pos, g_projMat); // applying projection
 
-    // calculating Fresnel coef approx.
     float angle_cos = abs(dot(-vEyeR, vN));
-    vs_out.coef.x = 1 / pow((1 + angle_cos), g_fresPow);
+    vs_out.coef.x = 1 / pow((1 + angle_cos), 6);
 
     return vs_out;
 }
@@ -64,7 +69,9 @@ float4 mirror_PS(vs_out_t ps_in) : COLOR0
     float4 tc = texCUBE(g_envCubeTexture, ps_in.envTex); // cube tex
     float4 tr = tex2D(textureSampler, ps_in.tex); // real obj. tex
 
-    return tr * (1 - ps_in.coef.x) + tc * (ps_in.coef.x);
+    return tc + (tr - tc)* (ps_in.coef.x);
+
+    //return tr;
 }
 
 technique mirror_technique

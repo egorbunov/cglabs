@@ -11,12 +11,12 @@ SkyBox::SkyBox(LPDIRECT3DDEVICE9 d3dDevice) {
     FRONT_MIPMAP_FILENAMES.push_back(L".\\Resources\\sky_box\\front.png");
 
 
-    top = new TexturedSquare(d3dDevice, { 0.0f, -1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, TOP_MIPMAP_FILENAMES);
-    bottom = new TexturedSquare(d3dDevice, { 0.0f, 1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, BOTTOM_MIPMAP_FILENAMES);
-    back = new TexturedSquare(d3dDevice, { -1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, BACK_MIPMAP_FILENAMES);
-    front = new TexturedSquare(d3dDevice, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, FRONT_MIPMAP_FILENAMES);
-    left = new TexturedSquare(d3dDevice, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, LEFT_MIPMAP_FILENAMES);
-    right = new TexturedSquare(d3dDevice, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, RIGHT_MIPMAP_FILENAMES);
+    top = new TexturedSquare(d3dDevice, { 0.0f, -1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, TOP_MIPMAP_FILENAMES, 1024);
+    bottom = new TexturedSquare(d3dDevice, { 0.0f, 1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, BOTTOM_MIPMAP_FILENAMES, 1024);
+    back = new TexturedSquare(d3dDevice, { -1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, BACK_MIPMAP_FILENAMES, 1024);
+    front = new TexturedSquare(d3dDevice, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, FRONT_MIPMAP_FILENAMES, 1024);
+    left = new TexturedSquare(d3dDevice, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, LEFT_MIPMAP_FILENAMES, 1024);
+    right = new TexturedSquare(d3dDevice, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, RIGHT_MIPMAP_FILENAMES, 1024);
 }
 
 SkyBox::~SkyBox() {

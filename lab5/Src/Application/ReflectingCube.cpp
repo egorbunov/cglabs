@@ -1,25 +1,33 @@
 #include "ReflectingCube.h"
 
-static std::vector<LPCWSTR> getMipMapFilenames() {
+static std::vector<LPCWSTR> getMipMapFilenames(int i) {
+    LPWSTR str = new WCHAR[100];
+    swprintf(str, 100, L".\\Resources\\f%d.png", i);
+    
     std::vector<LPCWSTR> res;
-    res.push_back(L".\\Resources\\mipmap32.png");
-    res.push_back(L".\\Resources\\mipmap64.png");
-    res.push_back(L".\\Resources\\mipmap128.png");
-    res.push_back(L".\\Resources\\mipmap256.png");
+    res.push_back(str);
+
     return res;
 }
-const std::vector<LPCWSTR> ReflectingCube::MIPMAP_FILENAMES = getMipMapFilenames();
+const std::vector<LPCWSTR> ReflectingCube::FACE_1_TEXS = getMipMapFilenames(1);
+const std::vector<LPCWSTR> ReflectingCube::FACE_2_TEXS = getMipMapFilenames(2);
+const std::vector<LPCWSTR> ReflectingCube::FACE_3_TEXS = getMipMapFilenames(3);
+const std::vector<LPCWSTR> ReflectingCube::FACE_4_TEXS = getMipMapFilenames(4);
+const std::vector<LPCWSTR> ReflectingCube::FACE_5_TEXS = getMipMapFilenames(5);
+const std::vector<LPCWSTR> ReflectingCube::FACE_6_TEXS = getMipMapFilenames(6);
+
+
 
 ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
     device = d3dDevice;
 
 
-    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
-    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, MIPMAP_FILENAMES, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, MIPMAP_FILENAMES, false));
-    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, MIPMAP_FILENAMES, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.5f, 0.0f }, 1.0f, FACE_1_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, -1.0f, 0.0f }, { 0.0f, -0.5f, 0.0f }, 1.0f, FACE_2_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { -0.5f, 0.0f, 0.0f }, 1.0f, FACE_3_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 1.0f, 0.0f, 0.0f }, { 0.5f, 0.0f, 0.0f }, 1.0f, FACE_4_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.5f }, 1.0f, FACE_5_TEXS, 128, false));
+    faces.push_back(new TexturedSquare(device, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, -0.5f }, 1.0f, FACE_6_TEXS, 128, false));
 
     LPD3DXBUFFER pErrors = NULL;
     LPD3DXBUFFER pShaderBuff = NULL;
@@ -50,13 +58,15 @@ ReflectingCube::ReflectingCube(LPDIRECT3DDEVICE9 d3dDevice) {
     }
 
 
-    hr = device->CreateCubeTexture(512,
+    hr = device->CreateCubeTexture(256,
                                    1,
                                    D3DUSAGE_RENDERTARGET,
                                    D3DFMT_A16B16G16R16F,
                                    D3DPOOL_DEFAULT,
                                    &cubeEnvTexture,
                                    NULL);
+
+    fresnelPow = 2.0f;
                                 
 
 }
@@ -68,6 +78,20 @@ ReflectingCube::~ReflectingCube() {
     effect->Release();
     cubeEnvTexture->Release();
     m_vertexDeclaration->Release();
+
+    
+    for (LPCWSTR s : FACE_1_TEXS)
+        delete s;
+    for (LPCWSTR s : FACE_2_TEXS)
+        delete s;
+    for (LPCWSTR s : FACE_3_TEXS)
+        delete s;
+    for (LPCWSTR s : FACE_4_TEXS)
+        delete s;
+    for (LPCWSTR s : FACE_5_TEXS)
+        delete s;
+    for (LPCWSTR s : FACE_6_TEXS)
+        delete s;
 }
 
 void ReflectingCube::renderObjectsToCubeMap(std::vector<RenderableObject*> objects) {
@@ -156,30 +180,39 @@ void ReflectingCube::render(const Transform *worldTransform) {
     hr = effect->SetMatrix("g_worldViewMat", &viewMat);
     hr = effect->SetMatrix("g_projMat", &projMat);
     hr = effect->SetTexture("g_txCubeMap", cubeEnvTexture);
-
+    hr = effect->SetFloat("g_fresPow", fresnelPow);
     hr = effect->SetTechnique("mirror_technique");
 
-    size_t num_passes = 0;
-
-    hr = effect->Begin(&num_passes, 0);
 
     std::string s = "faceTex";
-    effect->SetTexture(s.c_str(), faces[0]->getTexture());
-
+    
     Transform t;
-    for (size_t i = 0; i < num_passes; ++i)
-    {
-        hr = effect->BeginPass(i);
+    for (TexturedSquare* f : faces) {
+        size_t num_passes = 0;
 
-        for (TexturedSquare* f : faces) {
+        hr = effect->SetTexture(s.c_str(), f->getTexture());
+
+        hr = effect->Begin(&num_passes, 0);
+
+        for (size_t i = 0; i < num_passes; ++i)
+        {
+            hr = effect->BeginPass(i);
             f->render(&t);
+            hr = effect->EndPass();
         }
-
-        hr = effect->EndPass();
+        hr = effect->End();
 
     }
 
-    hr = effect->End();
     
+}
+
+void ReflectingCube::incFresnelPow() {
+    if (fresnelPow + 0.25f <= 10.0f)
+        fresnelPow += 0.25f;
+}
+void ReflectingCube::decFresnelPow() {
+    if (fresnelPow - 0.25f >= 0.0f)
+        fresnelPow -= 0.25f;
 }
 
