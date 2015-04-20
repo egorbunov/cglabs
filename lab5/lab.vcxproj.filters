@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Src\Application\Camera.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\CartesianCoordinateSystem.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\CircleIterator.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\myApp.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\TransformableObject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\WASDCamera.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Library\cglApp.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Library\cglD3D.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Library\cglTimer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Cylinder.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Transform.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\textured_objects.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\SkyBox.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\XMeshObject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\my_utils.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\ReflectingCube.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Src\Application\Camera.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\CartesianCoordinateSystem.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\CircleIterator.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\commonUtils.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\DirectedLight.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\LightSource.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\myApp.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Plane.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\PointLight.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\TransformableObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\SpotLight.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\WASDCamera.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Library\cglApp.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Library\cglD3D.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Library\cglTimer.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\RenderableObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Cylinder.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Transform.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\SkyBox.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\texture_objects.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\XMeshObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\my_utils.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\ReflectingCube.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{7dba89aa-6486-44f8-8440-e01859d8caa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{3f474713-5115-4d30-aab9-f7b838267045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{80a0dcf0-df1d-4881-96a5-c79d50844d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{3c75c508-fa53-4f04-b79f-17575446e2e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\effect.fx">
+      <Filter>shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

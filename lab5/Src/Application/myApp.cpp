@@ -32,6 +32,8 @@ namespace
 
 // ******************************************************************
 // static consts
+const int myApp::MIPMAPS[] = { D3DTEXF_POINT, D3DTEXF_LINEAR, D3DTEXF_NONE };
+const int myApp::MIN_MAG[2] = { D3DTEXF_POINT, D3DTEXF_LINEAR };
 
 // *******************************************************************
 // Methods
@@ -113,6 +115,10 @@ bool myApp::processInput(unsigned int nMsg, int wParam, long lParam)
                            }
                            isWASDCameraActive = !isWASDCameraActive;
                            break;
+                       case 'M':
+                           mimpmapIndex = (mimpmapIndex + 1) % 3;
+                           m_pD3D->getDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, MIPMAPS[mimpmapIndex]);
+                           break;
                        }
 
                        // processing numeric key press (switch off/on lights)
@@ -148,10 +154,11 @@ void myApp::renderInternal()
     else {
         m_d3ddev->SetTransform(D3DTS_VIEW, wasdCamera->getViewMatrix());
     }
-    
-    
+
+    reflectingCube->renderObjectsToCubeMap(aroundCubeObjects);
+    reflectingCube->render(reflectingCube->getWorldTransfrom());
     m_d3ddev->SetMaterial(&globalMaterial);
-    for (RenderableObject *obj : objects) {
+    for (RenderableObject *obj : aroundCubeObjects) {
         obj->render(obj->getWorldTransfrom());
     }
 }
@@ -179,8 +186,8 @@ void myApp::prepareLights() {
         hexToColor(0)));
     lights.push_back(new PointLight(
         D3DXVECTOR3(60.0f, 40.0f, -70.0f),
-        300.0f,
-        4.0f,
+        200.0f,
+        5.0f,
         0.000f,
         0.050f,
         0.001f,
@@ -252,7 +259,7 @@ void myApp::init_graphics() {
                                D3DXToRadian(45),    // the horizontal field of view
                                (FLOAT)SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, // aspect ratio
                                1.0f,    // the near view-plane
-                               2000.0f);    // the far view-plane
+                               10000.0f);    // the far view-plane
     m_d3ddev->SetTransform(D3DTS_PROJECTION, &m_matProj);    // set the projection
 
     prepareLights();
@@ -266,195 +273,25 @@ void myApp::init_graphics() {
 
     m_nClearColor = 0xFF111111;
 
-    // creating plane
-    Plane *plane = new Plane(m_d3ddev, 0, 0.005f);
-    plane->scale(100.0f, 100.0f, 100.0f);
-    plane->translate(0.0f, -80.0f, 0.0f);
-    objects.push_back(plane);
 
-    //objects.push_back(new Cylinder(m_d3ddev, D3DXVECTOR3(0.0f, 0.0f, 0.0f), { D3DX_PI / 2, 0.0f, 0.0f }, 25, 50, hexToColor(0xC91B12)));
+    SkyBox *box = new SkyBox(m_d3ddev);
+    box->scale(10000.0f, 10000.0f, 10000.0f);
+    objects.push_back(box);
 
-    prepareSkeleton();
+    aroundCubeObjects.push_back(box);
 
+
+    reflectingCube = new ReflectingCube(m_d3ddev);
+    objects.push_back(reflectingCube);
+    reflectingCube->scale(100.0f, 100.0f, 100.0f);
 }
 
 void myApp::doTransformations() {
-    for (RandomRotation *rr : randomRotations)
-        rr->next();
 }
 
 namespace {
 
 }
-
-
-void myApp::prepareSkeleton() {
-    float ropeRad = 0.25f;
-    float bellRad = 3.5f;
-    float crossRad = 4.0f;
-    float crossHeight = 50.0f;
-    float bellHeight = 27.0f;
-    float ropeHeight = 23.0f;
-    float ropeHeight2 = 15.0f;
-    float rootRopeHeight = 70.f;
-    float ropeInBellH = 2.5f;
-
-    D3DXCOLOR crossColor = hexToColor(0x59390C);
-    D3DXCOLOR ropeColor = hexToColor(0x5C5485);
-
-
-    Cylinder *rootRope = new Cylinder(m_d3ddev, ropeRad, rootRopeHeight, hexToColor(0x616161));
-
-    float height = 100.0f;
-
-    // initializing root of the structure and 2 crossing cylinders
-    mSkeleton = new Skeleton(rootRope);
-    rootRope->rotateX(D3DX_PI / 2);
-    rootRope->translate(0, -rootRopeHeight / 2, 0);
-    //mSkeleton->rotateY(D3DX_PI / 4);
-    mSkeleton->translate(0, height, 0);
-
-    
-    Cylinder *crossA = new Cylinder(m_d3ddev, crossRad, crossHeight, crossColor);
-    Skeleton *nodeCrossA = new Skeleton(crossA);
-    crossA->translate(0, rootRopeHeight / 2.0f, 0);
-    crossA->rotateX(D3DX_PI / 2);
-    mSkeleton->addChild(nodeCrossA);
-
-    
-    Cylinder *crossB = new Cylinder(m_d3ddev, crossRad, crossHeight, crossColor);
-    Skeleton *nodeCrossB = new Skeleton(crossB);
-    crossB->rotateY(D3DX_PI / 2.0);
-    nodeCrossA->addChild(nodeCrossB);
-
-    
-    // adding bells and ropes
-    auto addToCross = [&](Skeleton *p,  D3DVECTOR transl) {
-        Cylinder *rope = new Cylinder(m_d3ddev, ropeRad, ropeHeight, ropeColor);
-        rope->rotateX(D3DX_PI / 2);
-        rope->translate(transl.x, transl.y, transl.z);
-        Skeleton *nodeRope = new Skeleton(rope);
-        p->addChild(nodeRope);
-        Cylinder *bell = new Cylinder(m_d3ddev, bellRad, bellHeight, getRandomColor());
-        bell->rotateX(-D3DX_PI / 2);
-        bell->translate(0, -(ropeHeight / 2 + bellHeight / 2) + ropeInBellH, 0);
-        bell->rotateX(D3DX_PI / 2);
-        Skeleton * nodeBell = new Skeleton(bell);
-        nodeRope->addChild(nodeBell);
-        
-
-        
-        RandomRotation *rr = new RandomRotation(-0.2f, 0.2f, 0.002f, 0.003f);
-        rr->addTransformation(rope, [ropeHeight, bellRad](TransformableObject* o, float val) -> void {
-            o->rotateX(val);
-
-        });
-        randomRotations.push_back(rr);
-        
-        rr = new RandomRotation(-D3DX_PI, D3DX_PI, 0.002f, 0.003f);
-        rr->addTransformation(rope, [ropeHeight, transl](TransformableObject* o, float val) -> void {
-            o->translate(-transl.x, 0.0f, 0.0f);
-            o->rotateY(val);
-            o->translate(transl.x, 0.0f, 0.0f);
-        });
-        randomRotations.push_back(rr);
-
-        
-        rr = new RandomRotation(-0.05f, 0.05f, 0.002f, 0.004f);
-        rr->addTransformation(bell, [ropeHeight, bellHeight, ropeInBellH](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, 0.0f, -bellHeight / 2 + ropeInBellH);
-            o->rotateZ(val);
-            o->translate(0.0f, 0.0f, bellHeight / 2 - ropeInBellH);
-            o->transform(x);
-        });
-        randomRotations.push_back(rr);
-       
-        return nodeBell;
-    };
-
-    auto addToBell = [&](Skeleton *p, D3DVECTOR transl) {
-        Cylinder *rope = new Cylinder(m_d3ddev, ropeRad, ropeHeight, ropeColor);
-        rope->rotateX(-D3DX_PI / 2);
-        rope->translate(transl.x, transl.y, transl.z);    
-        rope->rotateX(D3DX_PI / 2);
-        Skeleton *nodeRope = new Skeleton(rope);
-        p->addChild(nodeRope);
-        Cylinder *bell = new Cylinder(m_d3ddev, bellRad, bellHeight, getRandomColor());
-        bell->translate(0.0f, 0.0f, -(ropeHeight2 / 2.0f + bellHeight / 2.0f) + ropeInBellH);
-
-        Skeleton * nodeBell = new Skeleton(bell);
-        nodeRope->addChild(nodeBell);
-        
-        
-        RandomRotation *rr = new RandomRotation(-0.06f, 0.06f, 0.002f, 0.003f);
-        rr->addTransformation(rope, [ropeHeight, bellRad](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, 0.0f, -ropeHeight / 2 + bellRad);
-            o->rotateX(val);
-            o->translate(0.0f, 0.0f, ropeHeight / 2 - bellRad);
-            o->transform(x);
-        });
-        randomRotations.push_back(rr);
-        
-
-        rr = new RandomRotation(-0.03f, 0.03f, 0.002f, 0.003f);
-        rr->addTransformation(bell, [bellHeight, ropeInBellH](TransformableObject* o, float val) -> void {
-            Transform x = *(o->getWorldTransfrom());
-            o->transform(Transform::getInverse(x));
-            o->translate(0.0f, 0.0f, -bellHeight / 2.0f + ropeInBellH);
-            o->rotateZ(val);
-            o->translate(0.0f, 0.0f, bellHeight / 2.0f - ropeInBellH);
-            o->transform(x);
-        });
-
-        
-        randomRotations.push_back(rr);
-
-        
-        
-        
-
-        return nodeBell;
-    };
-
-
-    Skeleton* bell = addToCross(nodeCrossA, { crossHeight / 2 - bellRad, ropeHeight / 2, 0.0f });
-    addToBell(bell, { 0.0f, -(ropeHeight / 2 + bellHeight / 2) + ropeInBellH, 0.0f });
-
-    bell = addToCross(nodeCrossA, { -(crossHeight / 2 - bellRad), ropeHeight / 2, 0.0f });
-    addToBell(bell, { 0.0f, -(ropeHeight / 2 + bellHeight / 2) + ropeInBellH, 0.0f });
-
-    addToCross(nodeCrossB, { (crossHeight / 2 - bellRad), ropeHeight / 2, 0.0f });
-    addToCross(nodeCrossB, { -(crossHeight / 2 - bellRad), ropeHeight / 2, 0.0f });
-
-    
-    RandomRotation *rr = new RandomRotation(-D3DX_PI / 4, D3DX_PI / 4, 0.005f, 0.006f);
-    rr->addTransformation(rootRope, [](TransformableObject* o, float val) -> void {
-        o->rotateY(val);
-    });
-    randomRotations.push_back(rr);
-
-    rr = new RandomRotation(-0.1f, 0.1f, 0.001f, 0.002f);
-    rr->addTransformation(rootRope, [](TransformableObject* o, float val) -> void {
-        o->rotateX(val);
-    });
-    randomRotations.push_back(rr);
-    
-    
-
-    
-
-    //
-
-
-    objects.push_back(mSkeleton);
-}
-
-
-
 
 
 void myApp::update()
@@ -493,13 +330,9 @@ void myApp::update()
 myApp::~myApp() {
     //delete circleIterator;
 
-    for (RandomRotation *rr : randomRotations) {
-        delete rr;
-    }
     
     delete wasdCamera;
     delete camera;
-    mSkeleton->clean();
     for (RenderableObject *o : objects)
         delete o;
 
